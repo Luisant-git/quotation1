@@ -1,0 +1,339 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  roleId    Int      @id @default(autoincrement())
+  name      String   
+  admins    Admin[]  @relation("AdminRoles")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+    @@unique([name], name: "Role_name_unique")
+}
+
+model Admin {
+  adminId   Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String   @default("Default Name") 
+  roles     Role[]   @relation("AdminRoles")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy  Int? 
+  updatedBy  Int? 
+  deletedBy  Int? 
+  concernId  Int
+  financialId Int?
+  concern_Master Concern_Master @relation(fields: [concernId], references: [HeaderId])
+  finacial_year  FinancialYear? @relation(fields: [financialId],references: [HeaderId])
+ @@unique([email, concernId], name: "Admin_email_concernId_unique") 
+}
+
+model Party {
+  ptycode       Int       @id @default(autoincrement())
+  Ptyname       String   
+  Add1          String?
+  Add2          String?
+  Add3          String?
+  Add4          String?
+  
+  District      String?
+  State         String?
+  Phone1        String?
+  Mobile        String?
+  Fax           String?
+  E_mail        String?
+  Panno         String?
+  Delete_flg    Int?
+  IsRunning     Int       @default(1)
+  TallyAccName  String?
+  MarketPerson  String?
+  MarketContact String?
+  IsExport      Int       @default(0)
+  IsCashParty   Int       @default(0)
+  State_id      Int?
+  GSTNO         String?
+  IsRegular     Int       @default(0)
+  BankName      String?
+  AccountNo     String?
+  IFSC          String?
+  PartyCode     String?
+  AccountName   String?
+  Branch        String?
+  CreditDays    Float     @default(0)
+  Pincode       String?   @default("")
+  Distance      Float     @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
+  createdBy  Int? 
+  updatedBy  Int? 
+  deletedBy  Int? 
+  concernId    Int?
+ 
+  purchaseEntries PurchaseEntry[]
+  @@unique([Ptyname], name: "Party_Ptyname_unique")
+}
+
+model Customer {
+  customercode  Int          @id @default(autoincrement())
+  customername  String?
+  Address       String?
+  Mobile        String?
+  Delete_Flg    Int          @default(0)
+  DeletedDate   String? 
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  createdBy     Int 
+  updatedBy     Int? 
+  deletedBy     Int? 
+  concernId     Int?
+  // Relation
+  saleEntries   SaleEntry[]
+}
+
+model ClothHeader {
+  Headerid       Int           @id @default(autoincrement())
+  Vchnum         String?
+  PrgDate        String?
+  VchTime        String?
+  ExpdelDate     String?
+  Party_Id       Int?
+  Trntype        String?
+  Remarks        String?
+  Isclosed       Int           @default(0)
+  createduser    String?       
+  CreatedDate    DateTime?     @default(now())
+  ModifiedUser   String?
+  ModifiedDate   DateTime?     @updatedAt
+  DeletedUser    String?
+  DeletedDate    String?
+  Delete_Flg     Int           @default(0)
+  SortOrder      Float?
+  Isapproved     Int           @default(0)
+  YearId         String?
+  PaymentTerms   String?
+  CreditDays     Float         @default(0)
+  PaymentTerms_Id String?
+  Instruction_Id  String?
+  narration      String?
+  notes          String?
+  ClothDetails   ClothDetail[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  createdBy  Int 
+  updatedBy  Int? 
+  deletedBy  Int? 
+  concernId     Int?
+}
+
+model ClothDetail {
+  DetailId       Int       @id @default(autoincrement())
+  HeaderId       Int
+  count          String?
+  clothdes       String?
+  combo          String?
+  Dia_Id         Int?
+  ClothDesc_Id   Int?
+  Uom_Id         Int?
+  GSM            Float     @default(0)
+  LL             String?
+  GG             Float     @default(0)
+  Delete_Flg     Int       @default(0)
+  Remarks        String?
+  Trntype        String?
+  Color_id       Int?
+  Rate           Float     @default(0)
+  CRate          Float     @default(0)
+  SampleRate     Float     @default(0)
+  CSampleRate    Float     @default(0)
+  Header         ClothHeader @relation(fields: [HeaderId], references: [Headerid])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  createdBy  Int 
+  updatedBy  Int? 
+  deletedBy  Int? 
+  concernId     Int?
+}
+
+model ItemMaster {
+  id                Int             @id @default(autoincrement())
+  itemCode          String          @unique
+  category          String?          @db.VarChar(30)
+  Cate_AliasName    String?          @db.VarChar(5)
+  itemName          String?          @db.VarChar(30)
+  Item_AliasName    String?          @db.VarChar(5)
+  color             String?          @db.VarChar(30)
+  Color_AliasName   String?          @db.VarChar(5)
+  size              String?
+  Size_AliasName    String?          @db.VarChar(5)
+  active            Boolean         @default(true)
+  hsnCode           String          @db.VarChar(8)
+  gstPercent        Float
+  IsRunning         Int             @default(0)
+  Delete_flg        Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  createdBy         Int
+  ModifiedDate      DateTime?
+  updatedBy         Int?
+  deletedBy         Int?
+  DeletedDate       DateTime?
+  concernId     Int?
+  PurchaseDetail    PurchaseItems[]
+  SaleDetail        SaleItems[]
+
+@@unique([itemCode, itemName, hsnCode, size, color], name: "ItemMaster_composite_unique")
+@@unique([itemName])
+}
+
+model SaleEntry {
+  id              Int       @id @default(autoincrement())
+  BillNo          String    @db.VarChar(50)
+  BillDate        String   @db.VarChar(30)
+  customerId      Int?    
+  Remarks         String    @db.VarChar(200)
+  TotalQty        Decimal   @default(0) @db.Decimal(32, 2)
+  TotalAmount     Decimal   @default(0) @db.Decimal(32, 2)
+  CardAmount      Decimal   @default(0) @db.Decimal(32, 2)
+  UPIAmount       Decimal   @default(0) @db.Decimal(32, 2)
+  TotalPaidAmount Decimal   @default(0) @db.Decimal(32, 2)
+  Delete_Flg      Int       @default(0)
+  createdBy       Int? 
+  updatedBy       Int? 
+  deletedBy       Int? 
+  CreatedDate     DateTime
+  ModifiedBy      String?   @db.VarChar(50)
+  ModifiedDate    DateTime?
+  DeletedDate     DateTime?
+  concernId       Int?
+  customer        Customer? @relation(fields: [customerId], references: [customercode])
+  FinancialYearId Int?
+  financialYear   FinancialYear? @relation(fields: [FinancialYearId], references: [HeaderId])
+  saleItems       SaleItems[]
+  @@unique([BillNo, concernId], name: "SaleEntry_BillNo_concernId_unique")
+}
+
+model SaleItems {
+  id             Int         @id @default(autoincrement())
+  Item_Id        Int
+  Qty            Decimal     @default(0) @db.Decimal(32, 2)
+  MRP            Decimal     @default(0) @db.Decimal(32, 2)
+  Rate           Decimal     @default(0) @db.Decimal(32, 2)
+  Amount         Decimal     @default(0) @db.Decimal(32, 2)
+  DiscType       String      @db.VarChar(50)
+  DiscPercent    Decimal     @default(0) @db.Decimal(32, 2)
+  DiscAmount     Decimal     @default(0) @db.Decimal(32, 2)
+  GSTAmount      Decimal     @default(0) @db.Decimal(32, 2)
+  HSNCode        String      @db.VarChar(50)
+  GSTPercent     Decimal     @default(0) @db.Decimal(32, 2)
+  NetAmount      Decimal     @default(0) @db.Decimal(32, 2)
+  ItemMaster     ItemMaster  @relation(fields: [Item_Id], references: [id])
+  saleEntryId    Int
+  saleEntry      SaleEntry   @relation(fields: [saleEntryId], references: [id], onDelete: Cascade)
+}
+
+model PurchaseEntry {
+  id              Int          @id @default(autoincrement())
+  RefNo        String   @db.VarChar(50)
+  RefDate      String?
+  Party_Id     Int
+  BillNo       String   @db.VarChar(50)
+  BillDate     String   @db.VarChar(30)
+  Remarks      String   @db.VarChar(200)
+  TotalQty     Decimal  @default(0) @db.Decimal(32, 2)
+  TotalAmount  Decimal  @default(0) @db.Decimal(32, 2)
+  GSTAmount    Decimal  @default(0) @db.Decimal(32, 2)
+  OtherType    String   @db.VarChar(4)
+  OtherAmount  Decimal  @default(0) @db.Decimal(32, 2)
+  Delete_Flg   Int      @default(0)
+  CreatedDate  DateTime
+  ModifiedBy   String?  @db.VarChar(50)
+  ModifiedDate DateTime?
+  DeletedDate  DateTime?
+  NetAmount    Decimal  @default(0) @db.Decimal(32, 2)
+  FinancialYearId Int?
+  concernId     Int?
+  createdBy  Int?
+  updatedBy  Int? 
+  deletedBy  Int? 
+  party           Party     @relation(fields: [Party_Id], references: [ptycode])
+  financialYear   FinancialYear? @relation(fields: [FinancialYearId], references: [HeaderId]) 
+  PurchaseItems PurchaseItems[]
+  @@unique([BillNo, Party_Id], name: "BillNo_PartyId_unique")
+}
+
+model PurchaseItems {
+  id           Int      @id @default(autoincrement())
+  Qty          Decimal  @default(0) @db.Decimal(32, 2)
+  MRP          Decimal  @default(0) @db.Decimal(32, 2)
+  Rate         Decimal  @default(0) @db.Decimal(32, 2)
+  Amount       Decimal  @default(0) @db.Decimal(32, 2)
+  DiscType     String   @db.VarChar(50)
+  DiscPercent  Decimal  @default(0) @db.Decimal(32, 2)
+  DiscAmount   Decimal  @default(0) @db.Decimal(32, 2)
+  GSTAmount    Decimal  @default(0) @db.Decimal(32, 2)
+  HSNCode      String   @db.VarChar(50)
+  bar_qr_code_No String? @db.VarChar(10)
+  GSTPercent   Decimal  @default(0) @db.Decimal(32, 2)
+  NetAmount    Decimal  @default(0) @db.Decimal(32, 2)
+  createdAt    DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  purchaseEntryId    Int
+  createdBy  Int? 
+  updatedBy  Int? 
+  deletedBy  Int? 
+  Item_Id    Int
+  ItemMaster   ItemMaster @relation(fields: [Item_Id], references: [id])
+  purchaseEntry   PurchaseEntry? @relation(fields: [purchaseEntryId], references: [id])
+}
+
+model FinancialYear {
+  HeaderId  Int      @id @default(autoincrement())
+  YearId    String   @db.VarChar(10)  
+  Date_From String
+  Date_To   String
+  IsRunning Int      @default(1)
+  Delete_flg Int     @default(0)
+  createdBy  Int? 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  updatedBy  Int? 
+  deletedBy  Int? 
+   Admin         Admin[] 
+  PurchaseEntry PurchaseEntry[]
+  SaleEntry SaleEntry[]
+  @@unique([YearId], name: "FinancialYear_YearId_unique")
+  @@unique([IsRunning], name: "FinancialYear_IsRunning_unique")
+}
+
+model Concern_Master {
+  HeaderId    Int      @id @default(autoincrement())
+  Concern_Name String  @db.VarChar(100)
+  LegalName   String   @db.VarChar(100)
+  Address     String   @db.Text
+  MobileNo    String   @db.VarChar(10)
+  PhoneNo     String   @db.VarChar(10)
+  EmailId     String   @db.VarChar(25)
+  GSTNo       String   @db.VarChar(15)
+  PanNo       String   @db.VarChar(10)
+  State       String   @db.VarChar(40)
+  StateCode   Int      
+  BankName    String   @db.VarChar(50)
+  AccountNo   String   @db.VarChar(50)
+  Branch      String   @db.VarChar(50)
+  IFSCCode    String   @db.VarChar(50)
+  Delete_flg  Int      @default(0)
+  IsRunning   Int      @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  createdBy  Int? 
+  updatedBy  Int? 
+  deletedBy  Int? 
+  admins       Admin[]
+  @@unique([Concern_Name], name: "Concern_Master_ConcernName_unique")
+}
