@@ -133,6 +133,9 @@ export class ItemService {
         where: {
           Delete_flg: 0,
         },
+        include:{
+          PurchaseDetail: true,
+        }
       });
     } catch (error) {
       console.error('Error finding items:', error);
