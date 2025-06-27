@@ -26,7 +26,7 @@ const initialSaleEntry = {
   CardAmount: 0,
   UPIAmount: 0,
   customerId: 0,
-  BillNo: getBillNo(),
+  BillNo: "",
 };
 
 const AddSaleEntry = () => {
@@ -76,6 +76,7 @@ const AddSaleEntry = () => {
         CardAmount: parseFloat(saleEntry.CardAmount.toString()) || 0,
         UPIAmount: parseFloat(saleEntry.UPIAmount.toString()) || 0,
         TotalAmount: parseFloat(totalAmount.toString()) || 0,
+        BillNo: saleEntry.BillNo || getBillNo(),
         TotalQty: parseFloat(totalQty.toString()),
         CreatedDate: new Date().toISOString(),
         saleItems: rows.map((row: any) => ({
@@ -92,7 +93,7 @@ const AddSaleEntry = () => {
           Amount: parseFloat(row.netAmount.toString()),
         })),
       });
-
+console.log("🧾 Sale Entry Response:", response);
       if (response.success) {
         setSaleEntry(initialSaleEntry);
         setRows([]);
@@ -155,6 +156,15 @@ const AddSaleEntry = () => {
             inputRef={firstInputRef}
           />
         </Grid>
+        <Grid item xs={12} sm={3}>
+          <TextField
+            label="Mobile No"
+            name="Mobile No"
+            type="number"
+            size="small"
+            
+          />
+        </Grid>
 
         {/* Mobile Field */}
         <Grid item xs={12} sm={6}>
@@ -169,6 +179,7 @@ const AddSaleEntry = () => {
                 setSaleEntry((prev) => ({
                   ...prev,
                   customerId: newValue?.customercode,
+                   BillNo: prev.BillNo || getBillNo(),
                 }));
               } else {
                 setSaleEntry((prev) => ({

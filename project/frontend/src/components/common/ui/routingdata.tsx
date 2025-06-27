@@ -44,6 +44,7 @@ export const Routedata = [
   { id: 12, path: `item`, element: <Item /> },
   { id: 13, path: `sale-entries`, element: <SaleEntry /> },
   { id: 14, path: `sale-entry`, element: <AddSaleEntry /> },
+  { id: 29, path: `sale-entry/:id`, element: <AddSaleEntry /> },
   { id: 15, path: `purchase-entries`, element: <PurchaseEntry /> },
   { id: 16, path: `purchase-entry`, element: <AddPurchaseEntry isnew /> },
   { id: 21, path: `purchase-entry/:id`, element: <AddPurchaseEntry /> },
@@ -60,4 +61,5 @@ export const Routedata = [
   { id: 26, path: `trash/sale`, element: <SaleTrash /> },
   { id: 27, path: `trash/customer`, element: <CustomerTrash /> },
   { id: 28, path: `trash/party`, element: <PartyTrash /> },
+  
 ];

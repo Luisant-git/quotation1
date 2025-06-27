@@ -21,7 +21,7 @@ interface Row {
   hsnCode?: string;
   gstPercent?: number;
   qty?: number;
-  mrp?: number | string;
+  mrp?: number;
   saleRate?: number | string;
   discType?: string;
   diskPersentage?: number | string;
@@ -331,7 +331,7 @@ const DataTable: React.FC<DataTableProps> = ({
         field: "itemCode",
         headerClassName: "custom-header",
         headerName: "ITEM CODE",
-        width: 100,
+        width: 90,
         editable: false,
       },
       {
@@ -345,28 +345,28 @@ const DataTable: React.FC<DataTableProps> = ({
         field: "category",
         headerClassName: "custom-header",
         headerName: "CATEGORY",
-        width: 100,
+        width: 86,
         editable: false,
       },
       {
         field: "color",
         headerClassName: "custom-header",
         headerName: "COLOR",
-        width: 100,
+        width: 70,
         editable: false,
       },
       {
         field: "size",
         headerClassName: "custom-header",
         headerName: "SIZE",
-        width: 100,
+        width: 60,
         editable: false,
       },
       {
         field: "hsnCode",
         headerClassName: "custom-header",
         headerName: "HSN CODE",
-        width: 100,
+        width: 80,
         editable: false,
         type: "number",
       },
@@ -374,14 +374,14 @@ const DataTable: React.FC<DataTableProps> = ({
         field: "gstPercent",
         headerClassName: "custom-header",
         headerName: "GST %",
-        width: 100,
+        width: 70,
         editable: true,
       },
       {
         field: "qty",
         headerClassName: "custom-header",
         headerName: "QTY",
-        width: 100,
+        width: 60,
         editable: true,
         type: "number",
       },
@@ -389,15 +389,15 @@ const DataTable: React.FC<DataTableProps> = ({
         field: "mrp",
         headerClassName: "custom-header",
         headerName: "MRP",
-        width: 100,
+        width: 70,
         editable: true,
         type: "number",
       },
       {
         field: "saleRate",
         headerClassName: "custom-header",
-        headerName: "S RATE",
-        width: 100,
+        headerName: "RATE",
+        width: 70,
         editable: true,
         type: "number",
       },
@@ -446,7 +446,7 @@ const DataTable: React.FC<DataTableProps> = ({
         field: "netAmount",
         headerClassName: "custom-header",
         headerName: "NET AMOUNT",
-        width: 130,
+        width: 100,
         editable: false,
         type: "number",
       },
@@ -454,7 +454,7 @@ const DataTable: React.FC<DataTableProps> = ({
         field: "actions",
         headerClassName: "custom-header",
         headerName: "ACTIONS",
-        width: 100,
+        width: 70,
         renderCell: (params) => (
           <button
             onClick={() => handleDeleteRow(params.row.id)}
@@ -508,6 +508,7 @@ const DataTable: React.FC<DataTableProps> = ({
                     <span>{suggestion.category}</span> /
                     <span>{suggestion.size}</span>/
                     <span>{suggestion.color}</span>
+                    
                   </li>
                 ))}
               </ul>

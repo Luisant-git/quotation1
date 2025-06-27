@@ -43,6 +43,11 @@ export class CreatePurchaseEntryDto {
   @ApiProperty({ example: 'OTHR', description: 'Type of other charges' })
   @IsString()
   OtherType: string;
+  
+  @ApiProperty({ example: 100.0, description: 'MRP of the item', required: false })
+  @IsOptional()
+  @IsDecimal()
+  MRP?: number;
 
   @ApiProperty({ example: 100, description: 'Other amount charges in purchase' })
   @IsDecimal()

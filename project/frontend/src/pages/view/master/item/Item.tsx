@@ -123,14 +123,14 @@ function Item() {
     setSubmitLoading(true);
     const { id, ...payload } = data;
 
-    const apiCall = modalData 
-      ? updateItem(id, payload)
-      : postItem(payload);
+    const apiCall = modalData ? updateItem(id, payload) : postItem(payload);
 
     apiCall
       .then((response) => {
         if (response?.success || response) {
-          toast.success(modalData ? "Item Updated successfully" : "Item added successfully");
+          toast.success(
+            modalData ? "Item Updated successfully" : "Item added successfully"
+          );
           fetchItems();
           handleCloseModal();
         } else {
@@ -151,8 +151,8 @@ function Item() {
     getItems()
       .then((response) => {
         if (response && response.status === 200) {
-          const activeItems = response.data.data.filter((item: ItemData) => 
-            item.Delete_flg !== 1
+          const activeItems = response.data.data.filter(
+            (item: ItemData) => item.Delete_flg !== 1
           );
           setFilteredData(activeItems);
         }
@@ -189,13 +189,13 @@ function Item() {
       {loading ? (
         <ItemSkeleton
           columns={[
-            "ITEM CODE",
             "ITEM NAME",
             "CATEGORY",
-            "HSN CODE",
-            "SIZE",
             "COLOR",
+            "SIZE",
+            "HSN CODE",
             "GST %",
+            "ITEM CODE",
             "ACTIVE",
             "ACTIONS",
           ]}
@@ -208,13 +208,14 @@ function Item() {
               tableClass="text-nowrap table-bordered bg-primary"
               headerBgColor="#f8f9fa"
               header={[
-                { title: "ITEM CODE" },
                 { title: "ITEM NAME" },
                 { title: "CATEGORY" },
-                { title: "HSN CODE" },
-                { title: "SIZE" },
                 { title: "COLOR" },
+                { title: "SIZE" },
+                { title: "HSN CODE" },
                 { title: "GST %" },
+                { title: "ITEM CODE" },
+
                 { title: "ACTIVE" },
                 { title: "ACTIONS" },
               ]}
@@ -225,13 +226,14 @@ function Item() {
             >
               {currentItems.map((item: ItemData) => (
                 <tr key={item.id}>
-                  <td>{item.itemCode}</td>
                   <td>{item.itemName}</td>
                   <td>{item.category}</td>
-                  <td>{item.hsnCode}</td>
-                  <td>{item.size}</td>
                   <td>{item.color}</td>
+                  <td>{item.size}</td>
+                  <td>{item.hsnCode}</td>
                   <td>{item.gstPercent}%</td>
+                  <td>{item.itemCode}</td>
+
                   <td>
                     {item.active ? (
                       <span className="badge bg-success">Active</span>

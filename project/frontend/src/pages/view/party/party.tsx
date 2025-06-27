@@ -192,13 +192,13 @@ function Party() {
               tableClass="text-nowrap table-bordered bg-primary"
               headerBgColor="#f8f9fa"
               header={[
-                { title: "Name" },
-                { title: "Address" },
-                { title: "Mobile" },
-                { title: "Email" },
+                { title: "NAME" },
+                { title: "ADDRESS" },
+                { title: "MOBILE" },
+                { title: "EMAIL" },
                 { title: "GST" },
-                { title: "Status" },
-                { title: "Action" },
+                { title: "STATUS" },
+                { title: "ACTION" },
               ]}
               totalItems={filteredData?.length}
               itemsPerPage={itemsPerPage}

@@ -28,7 +28,7 @@ interface PurchaseItemData {
   ItemMaster: any;
   id: number;
   Qty: string;
-  MRP: string;
+  MRP: number;
   Rate: string;
   Amount: string;
   DiscType: string;
@@ -257,7 +257,7 @@ function PurchaseEntry() {
                       direction={orderBy === "BillNo" ? order : "asc"}
                       onClick={() => handleSort("BillNo")}
                     >
-                      Bill No
+                      BILL NO
                     </TableSortLabel>
                   </TableCell>
                   <TableCell
@@ -272,7 +272,7 @@ function PurchaseEntry() {
                       direction={orderBy === "BillDate" ? order : "asc"}
                       onClick={() => handleSort("BillDate")}
                     >
-                      Bill Date
+                      BILL DATE
                     </TableSortLabel>
                   </TableCell>
                   <TableCell
@@ -282,7 +282,7 @@ function PurchaseEntry() {
                       padding: "8px",
                     }}
                   >
-                   Supplier
+                   SUPPLIER
                   </TableCell>
                   <TableCell
                     style={{
@@ -291,7 +291,8 @@ function PurchaseEntry() {
                       padding: "8px",
                     }}
                   >
-                    Total Qty
+                    TOTAL QTY
+                    
                   </TableCell>
                   <TableCell
                     style={{
@@ -300,9 +301,10 @@ function PurchaseEntry() {
                       padding: "8px",
                     }}
                   >
-                    Total Amount
+                    TOTAL AMOUNT
+                    
                   </TableCell>
-                  <TableCell
+                  {/* <TableCell
                     style={{
                       backgroundColor: "#6B76F8",
                       color: "#fff",
@@ -319,7 +321,7 @@ function PurchaseEntry() {
                     }}
                   >
                 Mobile
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell
                     style={{
                       backgroundColor: "#6B76F8",
@@ -327,8 +329,8 @@ function PurchaseEntry() {
                       padding: "8px",
                     }}
                   >
-                    Actions
-                  </TableCell>
+                    ACTIONS
+                                </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -361,12 +363,12 @@ function PurchaseEntry() {
                         <TableCell style={{ padding: "8px" }}>
                           {entry.TotalAmount}
                         </TableCell>
-                        <TableCell style={{ padding: "8px" }}>
+                        {/* <TableCell style={{ padding: "8px" }}>
                           {entry?.party?.Ptyname}
                         </TableCell>
                         <TableCell style={{ padding: "8px" }}>
                           {entry?.party?.Mobile}
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell style={{ padding: "8px" }}>
                           <div className="hstack gap-2 fs-15">
                             <Link

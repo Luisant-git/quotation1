@@ -138,7 +138,10 @@ export const getBillNo = () => {
   // const year = today.getFullYear();
   // const month = String(today.getMonth() + 1).padStart(2, "0");
   // const day = String(today.getDate()).padStart(2, "0");
-  const uniqueId = Math.floor(10000 + Math.random() * 9000);
-  return `BILL-${uniqueId}`;
+  let lastBillNo = parseInt(localStorage.getItem("lastBillNo") || "0", 10);
+  lastBillNo += 1;
+  localStorage.setItem("lastBillNo", lastBillNo.toString());
+  return `BILL-${lastBillNo.toString().padStart(4, "0")}`;
 };
+
 

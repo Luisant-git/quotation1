@@ -81,6 +81,7 @@ export class UpdatePurchaseItemDto {
   @IsOptional()
   @IsInt()
   updatedBy?: number;
+  
 
   @ApiProperty({ example: 1003, description: 'User who deleted the entry', required: false })
   @IsOptional()

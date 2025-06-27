@@ -17,6 +17,10 @@ export class CreateSaleEntryDto {
   @IsInt()
   customerId?: number;
 
+  @ApiProperty({ example: 100.0, description: 'Maximum Retail Price (MRP)' })
+  @IsDecimal()
+  MRP: number;
+
   @ApiProperty({ example: 'Regular customer purchase', description: 'Remarks' })
   @IsString()
   Remarks: string;
@@ -70,6 +74,11 @@ export class CreateSaleEntryDto {
   @IsOptional()
   @IsNumber()
   updatedBy?: number;
+  
+  @ApiProperty({ example: 1, description: 'Concern ID' })
+@IsInt()
+concernId: number;
+
 
   @ApiProperty({ description: 'deletedBy', required: false, default: 0 })
   @IsOptional()

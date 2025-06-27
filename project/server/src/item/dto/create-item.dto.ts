@@ -1,6 +1,6 @@
 // item-master.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min } from 'class-validator';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional,IsNumber, IsString, MaxLength, Min } from 'class-validator';
 
 export class CreateItemMasterDto {
   @ApiProperty()

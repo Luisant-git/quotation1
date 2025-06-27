@@ -247,7 +247,7 @@ function SaleEntry() {
                     direction={orderBy === "id" ? order : "asc"}
                     onClick={() => handleSort("id")}
                   >
-                    ID
+                  TITLE
                   </TableSortLabel>
                 </TableCell>
                 <TableCell style={{ backgroundColor: "#6B76F8", color: "#fff", padding: "8px" }}>
@@ -256,7 +256,7 @@ function SaleEntry() {
                     direction={orderBy === "billNo" ? order : "asc"}
                     onClick={() => handleSort("billNo")}
                   >
-                    Bill Number
+                    BILL NO
                   </TableSortLabel>
                 </TableCell>
                 <TableCell style={{ backgroundColor: "#6B76F8", color: "#fff", padding: "8px" }}>
@@ -265,21 +265,27 @@ function SaleEntry() {
                     direction={orderBy === "billDate" ? order : "asc"}
                     onClick={() => handleSort("billDate")}
                   >
-                    Date
+                    BILL DATE
+                    
                   </TableSortLabel>
                 </TableCell>
                 <TableCell style={{ backgroundColor: "#6B76F8", color: "#fff", padding: "8px" }}>
-                  Customer Name
+                  CUSTOMER
+                 
                 </TableCell>
                 <TableCell style={{ backgroundColor: "#6B76F8", color: "#fff", padding: "8px" }}>
-                  Mobile
+                  MOBILE NO
+                   
                 </TableCell>
                 <TableCell style={{ backgroundColor: "#6B76F8", color: "#fff", padding: "8px" }}>
-                  Total Amount
+                  NET AMOUNT
+                 
                 </TableCell>
                 <TableCell style={{ backgroundColor: "#6B76F8", color: "#fff", padding: "8px" }}>
-                  Actions
+                  ACTIONS
+
                 </TableCell>
+                                                  
               </TableRow>
             </TableHead>
             <TableBody>
@@ -305,8 +311,15 @@ function SaleEntry() {
                       <TableCell style={{ padding: "8px" }}>{entry.customerName}</TableCell>
                       <TableCell style={{ padding: "8px" }}>{entry.mobile}</TableCell>
                       <TableCell style={{ padding: "8px" }}>{entry.totalAmount}</TableCell>
+                      {/* HIGHLIGHT: Added Edit button */}
                       <TableCell style={{ padding: "8px" }}>
                         <div className="hstack gap-2 fs-15">
+                          <Link
+                            to={`/sale-entry/${entry.id}`} // Note: Changed from /purchase-entry to /sale-entry for context; use /purchase-entry/${entry.id} if that's the intended route
+                            className="btn btn-ic on btn-sm btn-info-light rounded-pill"
+                          >
+                            <i className="ri-edit-line"></i>
+                          </Link>
                           <Link
                             to=""
                             onClick={() => handleClickOpen(entry.id)}
@@ -316,6 +329,7 @@ function SaleEntry() {
                           </Link>
                         </div>
                       </TableCell>
+                      {/* END HIGHLIGHT */}
                     </TableRow>
                     <TableRow>
                       <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
@@ -325,34 +339,40 @@ function SaleEntry() {
                               <TableHead>
                                 <TableRow>
                                   <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
-                                    HSN Code
+                                    
+                                    HSN CODE
                                   </TableCell>
                                   <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
-                                    Quantity
+                                    {/* Quantity */}
+                                    QTY
                                   </TableCell>
                                   <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
                                     MRP
                                   </TableCell>
                                   <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
-                                    Sale Rate
+                                    
+                                    SALE RATE
                                   </TableCell>
                                   <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
-                                    Discount Type
+                                    
+                                    DISCOUNT TYPE
                                   </TableCell>
                                   <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
-                                    Discount %
+                                    
+                                    DISCOUNT %
                                   </TableCell>
                                   <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
-                                    Discount Amount
+                                    
+                                    DISCOUNT AMOUNT
                                   </TableCell>
                                   <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
                                     GST %
                                   </TableCell>
                                   <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
-                                    GST Amount
+                                    GST AMOUNT
                                   </TableCell>
                                   <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
-                                    Net Amount
+                                    NET  AMOUNT
                                   </TableCell>
                                 </TableRow>
                               </TableHead>

@@ -10,23 +10,59 @@ import { CreateSaleEntryDto } from './dto/create-sale-entry.dto';
 export class SaleEntryService {
   constructor(private prisma: PrismaService) {}
 
-  async createWithItems(data: CreateSaleEntryDto) {
-    try {
-      return await this.prisma.saleEntry.create({
-        data: {
-          ...data,
-          saleItems: {
-            create: data.saleItems,
-          },
-        },
-        include: { saleItems: true },
-      });
-    } catch (error) {
+  // async createWithItems(data: CreateSaleEntryDto) {
+  //   try {
+  //     return await this.prisma.saleEntry.create({
+  //       data: {
+  //         ...data,
+  //         saleItems: {
+  //           create: data.saleItems,
+  //         },
+  //       },
+  //       include: { saleItems: true },
+  //     });
+  //   } catch (error) {
+  //     throw new BadRequestException(
+  //       `Failed to create sale entry: ${error.message}`,
+  //     );
+  //   }
+  // }
+async createWithItems(data: CreateSaleEntryDto) {
+  try {
+    // Check for existing BillNo + concernId combination
+    const existing = await this.prisma.saleEntry.findFirst({
+      where: {
+        BillNo: data.BillNo,
+        concernId: data.concernId,
+      },
+    });
+
+    if (existing) {
       throw new BadRequestException(
-        `Failed to create sale entry: ${error.message}`,
+        `Sale Entry with BillNo "${data.BillNo}" already exists for concern ID ${data.concernId}.`,
       );
     }
+
+    // Proceed to create if no duplicate found
+    return await this.prisma.saleEntry.create({
+      data: {
+        ...data,
+        saleItems: {
+          create: data.saleItems,
+        },
+      },
+      include: { saleItems: true },
+    });
+
+  } catch (error) {
+    if (error.code === 'P2002') {
+      throw new BadRequestException('Duplicate BillNo for this concern.');
+    }
+    throw new BadRequestException(
+      `Failed to create sale entry: ${error.message}`,
+    );
   }
+}
 
   async findAll() {
     try {

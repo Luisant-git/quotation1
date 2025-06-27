@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlserver"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -41,7 +41,6 @@ model Party {
   Add2          String?
   Add3          String?
   Add4          String?
-  
   District      String?
   State         String?
   Phone1        String?
@@ -184,6 +183,7 @@ model ItemMaster {
   deletedBy         Int?
   DeletedDate       DateTime?
   concernId     Int?
+  
   PurchaseDetail    PurchaseItems[]
   SaleDetail        SaleItems[]
 
