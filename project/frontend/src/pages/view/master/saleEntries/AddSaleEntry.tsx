@@ -39,6 +39,18 @@ const AddSaleEntry = () => {
   const [totalQty, setTotalQty] = useState(0);
   const [customer, setCustomer] = useState<any>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null); // State to track selected customer in Autocomplete
+  
+const fetchBillNo = async () => {
+  const billNo = await getBillNo();
+  setSaleEntry((prev) => ({
+    ...prev,
+    BillNo: prev.BillNo || billNo,
+  }));
+}
+
+  useEffect(()=>{
+    fetchBillNo()
+  },[])
 
   // Focus the first input field on component mount
   useEffect(() => {
@@ -165,15 +177,12 @@ const AddSaleEntry = () => {
             size="small"
             options={customer}
             value={selectedCustomer}
-            onChange={async (_event, newValue) => {
+            onChange={(_event, newValue) => {
               setSelectedCustomer(newValue);
               if (newValue) {
-                const billNo = await getBillNo();
-
                 setSaleEntry((prev) => ({
                   ...prev,
                   customerId: newValue?.customercode,
-                  BillNo: prev.BillNo || billNo,
                 }));
               } else {
                 setSaleEntry((prev) => ({
