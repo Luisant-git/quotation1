@@ -414,7 +414,7 @@ const DataTable: React.FC<DataTableProps> = ({
         field: "diskPersentage",
         headerClassName: "custom-header",
         headerName: "DISCOUNT %",
-        width: 100,
+        width: 70,
         editable: true,
         type: "number",
       },
