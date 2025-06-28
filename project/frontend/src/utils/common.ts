@@ -1,3 +1,5 @@
+import { getSaleEntries } from "../api/saleentry";
+
 export const printSaleEntry = (saleEntryData: any) => {
   const printWindow = window.open("", "_blank");
   if (!printWindow) {
@@ -133,15 +135,19 @@ export const printSaleEntry = (saleEntryData: any) => {
   const day = String(today.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
-export const getBillNo = () => {
+export const getBillNo = async () => {
   // const today = new Date();
   // const year = today.getFullYear();
   // const month = String(today.getMonth() + 1).padStart(2, "0");
   // const day = String(today.getDate()).padStart(2, "0");
-  let lastBillNo = parseInt(localStorage.getItem("lastBillNo") || "0", 10);
-  lastBillNo += 1;
-  localStorage.setItem("lastBillNo", lastBillNo.toString());
-  return `BILL-${lastBillNo.toString().padStart(4, "0")}`;
+  const response = await getSaleEntries();
+  const maxId = response.data.data.reduce((max: number, entry: any) => {
+    return Math.max(max, entry.id);
+  }, 0);
+  const nextBillNo = maxId + 1;
+  localStorage.setItem("lastBillNo", nextBillNo.toString());
+  console.log("BILL - SALE ENTRY", `BILL-${nextBillNo.toString().padStart(4, "0")}`);
+  return `BILL-${nextBillNo.toString().padStart(4, "0")}`;
 };
 
 

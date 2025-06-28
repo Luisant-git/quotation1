@@ -76,7 +76,7 @@ const AddSaleEntry = () => {
         CardAmount: parseFloat(saleEntry.CardAmount.toString()) || 0,
         UPIAmount: parseFloat(saleEntry.UPIAmount.toString()) || 0,
         TotalAmount: parseFloat(totalAmount.toString()) || 0,
-        BillNo: saleEntry.BillNo || getBillNo(),
+        BillNo: saleEntry.BillNo || (await getBillNo()),
         TotalQty: parseFloat(totalQty.toString()),
         CreatedDate: new Date().toISOString(),
         saleItems: rows.map((row: any) => ({
@@ -127,79 +127,81 @@ const AddSaleEntry = () => {
 
   return (
     <Paper style={{ padding: 10 }}>
-  <Grid container spacing={2}>
-    {/* Bill No */}
-    <Grid item xs={12} sm={3}>
-      <TextField
-        label="Bill No"
-        name="BillNo"
-        type="text"
-        size="small"
-        value={saleEntry.BillNo}
-        onChange={handleInputChange}
-        fullWidth
-        InputLabelProps={{ shrink: true }}
-        inputRef={firstInputRef}
-      />
-    </Grid>
+      <Grid container spacing={2}>
+        {/* Bill No */}
+        <Grid item xs={12} sm={3}>
+          <TextField
+            label="Bill No"
+            name="BillNo"
+            type="text"
+            size="small"
+            value={saleEntry.BillNo}
+            onChange={handleInputChange}
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            inputRef={firstInputRef}
+          />
+        </Grid>
 
-    {/* Bill Date */}
-    <Grid item xs={12} sm={3}>
-      <TextField
-        label="Bill Date"
-        name="billDate"
-        type="date"
-        size="small"
-        value={saleEntry.BillDate}
-        onChange={handleInputChange}
-        fullWidth
-        InputLabelProps={{ shrink: true }}
-        inputRef={firstInputRef}
-      />
-    </Grid>
+        {/* Bill Date */}
+        <Grid item xs={12} sm={3}>
+          <TextField
+            label="Bill Date"
+            name="billDate"
+            type="date"
+            size="small"
+            value={saleEntry.BillDate}
+            onChange={handleInputChange}
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            inputRef={firstInputRef}
+          />
+        </Grid>
 
-    {/* Customer */}
-    <Grid item xs={12} sm={3}>
-      <Autocomplete
-        disablePortal
-        size="small"
-        options={customer}
-        value={selectedCustomer}
-        onChange={(_event, newValue) => {
-          setSelectedCustomer(newValue);
-          if (newValue) {
-            setSaleEntry((prev) => ({
-              ...prev,
-              customerId: newValue?.customercode,
-              BillNo: prev.BillNo || getBillNo(),
-            }));
-          } else {
-            setSaleEntry((prev) => ({
-              ...prev,
-              customerId: 0,
-            }));
-          }
-        }}
-        getOptionLabel={(option) => option.customername}
-        renderInput={(params) => (
-          <TextField {...params} label="Customer" fullWidth />
-        )}
-      />
-    </Grid>
+        {/* Customer */}
+        <Grid item xs={12} sm={3}>
+          <Autocomplete
+            disablePortal
+            size="small"
+            options={customer}
+            value={selectedCustomer}
+            onChange={async (_event, newValue) => {
+              setSelectedCustomer(newValue);
+              if (newValue) {
+                const billNo = await getBillNo();
 
-    {/* Mobile No */}
-    <Grid item xs={12} sm={3}>
-      <TextField
-        label="Mobile No"
-        name="mobileNo"
-        type="number"
-        size="small"
-        //  value={selectedCustomer?.Mobile || ""}
-        fullWidth
-        InputLabelProps={{ shrink: true }}
-      />
-    </Grid>
-  </Grid>
+                setSaleEntry((prev) => ({
+                  ...prev,
+                  customerId: newValue?.customercode,
+                  BillNo: prev.BillNo || billNo,
+                }));
+              } else {
+                setSaleEntry((prev) => ({
+                  ...prev,
+                  customerId: 0,
+                }));
+              }
+            }}
+            getOptionLabel={(option) => option.customername}
+            renderInput={(params) => (
+              <TextField {...params} label="Customer" fullWidth />
+            )}
+          />
+        </Grid>
+
+        {/* Mobile No */}
+        <Grid item xs={12} sm={3}>
+          <TextField
+            label="Mobile No"
+            name="mobileNo"
+            type="number"
+            size="small"
+            //  value={selectedCustomer?.Mobile || ""}
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+          />
+        </Grid>
+      </Grid>
 
       {/* EditCell Component for Rows */}
       <div style={{ width: "100%", marginTop: 16 }}>

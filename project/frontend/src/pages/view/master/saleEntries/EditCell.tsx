@@ -54,7 +54,13 @@ const DataTable: React.FC<DataTableProps> = ({
   const barcodeInputRef = useRef<HTMLInputElement>(null); // Ref for the barcode input field
   const integerFields = ["qty", "GSM", "LL", "GG"];
   const [itemCodeSuggestions, setItemCodeSuggestions] = useState<
-    { itemCode: string; itemName: string; category: string; size: string; color: string }[]
+    {
+      itemCode: string;
+      itemName: string;
+      category: string;
+      size: string;
+      color: string;
+    }[]
   >([]);
   const [barcodeInput, setBarcodeInput] = useState<string>("");
   const suggestionsRef = useRef<HTMLUListElement>(null); // Ref for the suggestions list
@@ -149,6 +155,10 @@ const DataTable: React.FC<DataTableProps> = ({
             });
             return;
           }
+          const mrp = item.PurchaseDetail?.[0]?.MRP
+            ? parseFloat(item.PurchaseDetail[0].MRP)
+            : 0;
+
           const existingRow = Array.isArray(rows)
             ? rows.find(
                 (row) =>
@@ -176,7 +186,7 @@ const DataTable: React.FC<DataTableProps> = ({
               hsnCode: item.hsnCode,
               gstPercent: item.gstPercent,
               qty: 1,
-              mrp: 0,
+              mrp: mrp,
               saleRate: 0,
               discType: "%",
               diskPersentage: "0",
@@ -260,12 +270,16 @@ const DataTable: React.FC<DataTableProps> = ({
               size: string;
               color: string;
               active: boolean;
+              PurchaseDetail: any[];
             }) =>
               item.active &&
               (item.itemCode.toLowerCase().includes(query.toLowerCase()) ||
                 item.itemName.toLowerCase().includes(query.toLowerCase()) ||
                 item.category.toLowerCase().includes(query.toLowerCase()) ||
                 item.size.toLowerCase().includes(query.toLowerCase()) ||
+                (item.PurchaseDetail?.[0]?.MRP || "")
+                  .toString()
+                  .includes(query) ||
                 item.color.toLowerCase().includes(query.toLowerCase()))
           )
           .map(
@@ -275,12 +289,14 @@ const DataTable: React.FC<DataTableProps> = ({
               category: string;
               size: string;
               color: string;
+              PurchaseDetail: any[];
             }) => ({
               itemCode: item.itemCode,
               itemName: item.itemName,
               category: item.category,
               size: item.size,
               color: item.color,
+              mrp: item.PurchaseDetail?.[0]?.MRP || "0",
             })
           );
         setItemCodeSuggestions(suggestions);
@@ -508,7 +524,6 @@ const DataTable: React.FC<DataTableProps> = ({
                     <span>{suggestion.category}</span> /
                     <span>{suggestion.size}</span>/
                     <span>{suggestion.color}</span>
-                    
                   </li>
                 ))}
               </ul>
@@ -523,6 +538,10 @@ const DataTable: React.FC<DataTableProps> = ({
           apiRef={apiRef}
           disableColumnSorting
           processRowUpdate={(newRow: Row) => {
+            if ("qty" in newRow) {
+              const qty = Number(newRow.qty);
+              newRow.qty = isNaN(qty) || qty <= 0 ? 1 : Math.floor(qty);
+            }
             const updatedRows = rows.map((row) => {
               if (row.id === newRow.id) {
                 // Validation logic for discount type

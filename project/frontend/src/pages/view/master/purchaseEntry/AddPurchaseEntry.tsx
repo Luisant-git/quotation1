@@ -13,7 +13,7 @@ import * as Yup from "yup";
 import EditCell from "./EditCell";
 import { toast } from "react-toastify";
 import {
-  getBillNo,
+  // getBillNo,
   getTodayDate,
   printSaleEntry,
 } from "../../../../utils/common";
@@ -27,7 +27,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const initialSaleEntry = {
   BillDate: getTodayDate(),
-  BillNo: getBillNo(),
+  BillNo: "",
   RefDate: getTodayDate(),
   Party_Id: 0,
   Remarks: "",
@@ -115,13 +115,14 @@ const AddPurchaseEntry = ({ isnew = false }) => {
                 bar_qr_code_No: item?.bar_qr_code_No,
               })
             ) || [];
-
+          
           setRows(mappedRows);
           const selectedParty = parties.find(
             (party: any) => party.ptycode === response?.data.data.Party_Id
           );
           setSelectedParty(selectedParty);
           setLoading(false);
+          console.log("++++MRP++++", mappedRows, selectedParty);
         }
       })
       .catch((error) => {
