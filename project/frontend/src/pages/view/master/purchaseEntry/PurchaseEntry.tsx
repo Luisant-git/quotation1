@@ -95,8 +95,10 @@ function PurchaseEntry() {
     getPurchaseEntries()
       .then((response) => {
         if (response && response.status === 200) {
+          console.log("PURCHASE - ENTRIES : ",response.data.data);
+          
           const activeEntries = response.data.data.filter(
-            (entry: PurchaseEntryData) => entry.Delete_Flg !== 1
+            (entry: PurchaseEntryData) => entry.Delete_Flg !== 1 && Number(entry.TotalAmount) != 0
           );
           setPurchaseEntries(activeEntries);
         }

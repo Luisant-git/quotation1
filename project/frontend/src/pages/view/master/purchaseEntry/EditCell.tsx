@@ -21,7 +21,6 @@ interface Row {
   hsnCode?: string;
   gstPercent?: number;
   qty?: number;
-  mrp?: number;
   saleRate?: number | string;
   discType?: string;
   diskPersentage?: number | string;
@@ -30,6 +29,7 @@ interface Row {
   gstAmount?: number | string;
   netAmount?: number | string;
   bar_qr_code_No?: string;
+  PurchaseDetail?: any[];
 }
 
 interface DataTableProps {
@@ -56,7 +56,14 @@ const DataTable: React.FC<DataTableProps> = ({
   const suggestionsRef = useRef<HTMLUListElement>(null); // Ref for the suggestions list
   const integerFields = ["qty", "GSM", "LL", "GG"];
   const [itemCodeSuggestions, setItemCodeSuggestions] = useState<
-    { itemCode: string; itemName: string; category: string; size: string; color: string }[]
+    {
+      itemCode: string;
+      itemName: string;
+      category: string;
+      size: string;
+      color: string;
+      mrp: string;
+    }[]
   >([]);
   const [barcodeInput, setBarcodeInput] = useState<string>("");
 
@@ -123,6 +130,8 @@ const DataTable: React.FC<DataTableProps> = ({
     };
   };
 
+  console.log("--------CHECK-MRP--------", rows);
+
   // Update Net Amount for all rows
   const updateNetAmounts = (rows: Row[]) => {
     return rows.map((row) => calculateNetAmount(row));
@@ -152,6 +161,9 @@ const DataTable: React.FC<DataTableProps> = ({
             });
             return;
           }
+
+          const mrp = item.PurchaseDetail?.[0]?.MRP || "";
+
           const existingRow = Array.isArray(rows)
             ? rows.find(
                 (row) =>
@@ -179,7 +191,7 @@ const DataTable: React.FC<DataTableProps> = ({
               hsnCode: item.hsnCode,
               gstPercent: item.gstPercent,
               qty: 1,
-              mrp: 0,
+              mrp: mrp,
               saleRate: 0,
               discType: "%",
               diskPersentage: "0",
@@ -224,7 +236,6 @@ const DataTable: React.FC<DataTableProps> = ({
 
   // Handle cell edit commit
 
-
   // Fetch item code suggestions
   const fetchItemCodeSuggestions = async (query: string) => {
     try {
@@ -239,12 +250,16 @@ const DataTable: React.FC<DataTableProps> = ({
               size: string;
               color: string;
               active: boolean;
+              PurchaseDetail: any[];
             }) =>
               item.active &&
               (item.itemCode.toLowerCase().includes(query.toLowerCase()) ||
                 item.itemName.toLowerCase().includes(query.toLowerCase()) ||
                 item.category.toLowerCase().includes(query.toLowerCase()) ||
                 item.size.toLowerCase().includes(query.toLowerCase()) ||
+                (item.PurchaseDetail?.[0]?.MRP || "")
+                  .toLowerCase()
+                  .includes(query.toLowerCase()) ||
                 item.color.toLowerCase().includes(query.toLowerCase()))
           )
           .map(
@@ -254,12 +269,14 @@ const DataTable: React.FC<DataTableProps> = ({
               category: string;
               size: string;
               color: string;
+              PurchaseDetail: any[];
             }) => ({
               itemCode: item.itemCode,
               itemName: item.itemName,
               category: item.category,
               size: item.size,
               color: item.color,
+              mrp: item.PurchaseDetail?.[0]?.MRP || "",
             })
           );
         setItemCodeSuggestions(suggestions);
@@ -295,6 +312,8 @@ const DataTable: React.FC<DataTableProps> = ({
 
   const handleDeleteRow = (id: number) => {
     const updatedRows = rows.filter((row) => row.id !== id);
+    console.log("UPDATED-ROWS:", updatedRows);
+
     setRows(updatedRows);
   };
 
@@ -505,6 +524,10 @@ const DataTable: React.FC<DataTableProps> = ({
           apiRef={apiRef}
           disableColumnSorting
           processRowUpdate={(newRow: Row) => {
+            if ("qty" in newRow) {
+              const qty = Number(newRow.qty);
+              newRow.qty = isNaN(qty) || qty <= 0 ? 1 : Math.floor(qty);
+            }
             const updatedRows = rows.map((row) => {
               if (row.id === newRow.id) {
                 // Validation logic for discount type
