@@ -195,7 +195,7 @@ function Item() {
             "SIZE",
             "HSN CODE",
             "GST %",
-            "ITEM CODE",
+            // "ITEM CODE",
             "ACTIVE",
             "ACTIONS",
           ]}
@@ -214,7 +214,7 @@ function Item() {
                 { title: "SIZE" },
                 { title: "HSN CODE" },
                 { title: "GST %" },
-                { title: "ITEM CODE" },
+                // { title: "ITEM CODE" },
 
                 { title: "ACTIVE" },
                 { title: "ACTIONS" },
@@ -232,7 +232,7 @@ function Item() {
                   <td>{item.size}</td>
                   <td>{item.hsnCode}</td>
                   <td>{item.gstPercent}%</td>
-                  <td>{item.itemCode}</td>
+                  {/* <td>{item.itemCode}</td> */}
 
                   <td>
                     {item.active ? (

@@ -22,6 +22,10 @@ import { toast } from "react-toastify";
 import ItemSkeleton from "../../../../components/skeleton/Skeleton";
 
 interface SaleItemData {
+  category: string;
+  itemName: string;
+  color: string;
+  size: string;
   HSNCode: number;
   id: number;
   GSTAmount: number;
@@ -65,7 +69,9 @@ function SaleEntry() {
   const [openRows, setOpenRows] = useState<number[]>([]);
   const [orderBy, setOrderBy] = useState<keyof SaleEntryData>("id");
   const [order, setOrder] = useState<"asc" | "desc">("asc");
-  const [selectedSaleEntryId, setSelectedSaleEntryId] = useState<number | null>(null);
+  const [selectedSaleEntryId, setSelectedSaleEntryId] = useState<number | null>(
+    null
+  );
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -92,6 +98,10 @@ function SaleEntry() {
             saleItems: entry.saleItems.map((item: any) => ({
               id: item.id,
               HSNCode: item.HSNCode,
+              itemName: item.itemName || item.ItemMaster?.itemName || "",
+              category: item.category || item.ItemMaster?.category || "",
+              color: item.color || item.ItemMaster?.color || "",
+              size: item.size || item.ItemMaster?.size || "",
               GSTAmount: item.GSTAmount,
               GSTPercent: item.GSTPercent,
               NetAmount: item.NetAmount,
@@ -137,7 +147,9 @@ function SaleEntry() {
     deleteSaleEntry(selectedSaleEntryId)
       .then((response) => {
         if (response?.success) {
-          toast.success("Sale Entry moved to trash successfully", { autoClose: 1000 });
+          toast.success("Sale Entry moved to trash successfully", {
+            autoClose: 1000,
+          });
           fetchSaleEntries();
           setOpen(false);
         } else {
@@ -160,7 +172,9 @@ function SaleEntry() {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -188,7 +202,9 @@ function SaleEntry() {
       saleEntries
         .filter(
           (entry) =>
-            entry.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            entry.customerName
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase()) ||
             entry.billNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
             entry.mobile.toLowerCase().includes(searchTerm.toLowerCase())
         )
@@ -204,7 +220,10 @@ function SaleEntry() {
 
   const totalPages = Math.ceil(filteredData.length / rowsPerPage);
 
-  const onPageChange = (_event: React.ChangeEvent<unknown>, newPage: number) => {
+  const onPageChange = (
+    _event: React.ChangeEvent<unknown>,
+    newPage: number
+  ) => {
     setPage(newPage - 1);
   };
 
@@ -240,17 +259,35 @@ function SaleEntry() {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell style={{ backgroundColor: "#6B76F8", color: "#fff", padding: "8px" }} />
-                <TableCell style={{ backgroundColor: "#6B76F8", color: "#fff", padding: "8px" }}>
+                <TableCell
+                  style={{
+                    backgroundColor: "#6B76F8",
+                    color: "#fff",
+                    padding: "8px",
+                  }}
+                />
+                <TableCell
+                  style={{
+                    backgroundColor: "#6B76F8",
+                    color: "#fff",
+                    padding: "8px",
+                  }}
+                >
                   <TableSortLabel
                     active={orderBy === "id"}
                     direction={orderBy === "id" ? order : "asc"}
                     onClick={() => handleSort("id")}
                   >
-                  TITLE
+                    TITLE
                   </TableSortLabel>
                 </TableCell>
-                <TableCell style={{ backgroundColor: "#6B76F8", color: "#fff", padding: "8px" }}>
+                <TableCell
+                  style={{
+                    backgroundColor: "#6B76F8",
+                    color: "#fff",
+                    padding: "8px",
+                  }}
+                >
                   <TableSortLabel
                     active={orderBy === "billNo"}
                     direction={orderBy === "billNo" ? order : "asc"}
@@ -259,33 +296,66 @@ function SaleEntry() {
                     BILL NO
                   </TableSortLabel>
                 </TableCell>
-                <TableCell style={{ backgroundColor: "#6B76F8", color: "#fff", padding: "8px" }}>
+                <TableCell
+                  style={{
+                    backgroundColor: "#6B76F8",
+                    color: "#fff",
+                    padding: "8px",
+                  }}
+                >
                   <TableSortLabel
                     active={orderBy === "billDate"}
                     direction={orderBy === "billDate" ? order : "asc"}
                     onClick={() => handleSort("billDate")}
                   >
                     BILL DATE
-                    
                   </TableSortLabel>
                 </TableCell>
-                <TableCell style={{ backgroundColor: "#6B76F8", color: "#fff", padding: "8px" }}>
+                <TableCell
+                  style={{
+                    backgroundColor: "#6B76F8",
+                    color: "#fff",
+                    padding: "8px",
+                  }}
+                >
                   CUSTOMER
-                 
                 </TableCell>
-                <TableCell style={{ backgroundColor: "#6B76F8", color: "#fff", padding: "8px" }}>
+                <TableCell
+                  style={{
+                    backgroundColor: "#6B76F8",
+                    color: "#fff",
+                    padding: "8px",
+                  }}
+                >
                   MOBILE NO
-                   
                 </TableCell>
-                <TableCell style={{ backgroundColor: "#6B76F8", color: "#fff", padding: "8px" }}>
+                <TableCell
+                  style={{
+                    backgroundColor: "#6B76F8",
+                    color: "#fff",
+                    padding: "8px",
+                  }}
+                >
+                  TOTAL QTY
+                </TableCell>
+                <TableCell
+                  style={{
+                    backgroundColor: "#6B76F8",
+                    color: "#fff",
+                    padding: "8px",
+                  }}
+                >
                   NET AMOUNT
-                 
                 </TableCell>
-                <TableCell style={{ backgroundColor: "#6B76F8", color: "#fff", padding: "8px" }}>
+                <TableCell
+                  style={{
+                    backgroundColor: "#6B76F8",
+                    color: "#fff",
+                    padding: "8px",
+                  }}
+                >
                   ACTIONS
-
                 </TableCell>
-                                                  
               </TableRow>
             </TableHead>
             <TableBody>
@@ -303,14 +373,27 @@ function SaleEntry() {
                           {openRows.includes(entry.id) ? <Remove /> : <Add />}
                         </IconButton>
                       </TableCell>
-                      <TableCell style={{ padding: "8px" }}>{entry.id}</TableCell>
-                      <TableCell style={{ padding: "8px" }}>{entry.billNo}</TableCell>
+                      <TableCell style={{ padding: "8px" }}>
+                        {entry.id}
+                      </TableCell>
+                      <TableCell style={{ padding: "8px" }}>
+                        {entry.billNo}
+                      </TableCell>
                       <TableCell style={{ padding: "8px" }}>
                         {new Date(entry.billDate).toLocaleDateString()}
                       </TableCell>
-                      <TableCell style={{ padding: "8px" }}>{entry.customerName}</TableCell>
-                      <TableCell style={{ padding: "8px" }}>{entry.mobile}</TableCell>
-                      <TableCell style={{ padding: "8px" }}>{entry.totalAmount}</TableCell>
+                      <TableCell style={{ padding: "8px" }}>
+                        {entry.customerName}
+                      </TableCell>
+                      <TableCell style={{ padding: "8px" }}>
+                        {entry.mobile}
+                      </TableCell>
+                      <TableCell style={{ padding: "8px" }}>
+                        {entry.totalQty}
+                      </TableCell>
+                      <TableCell style={{ padding: "8px" }}>
+                        {entry.totalAmount}
+                      </TableCell>
                       {/* HIGHLIGHT: Added Edit button */}
                       <TableCell style={{ padding: "8px" }}>
                         <div className="hstack gap-2 fs-15">
@@ -332,63 +415,193 @@ function SaleEntry() {
                       {/* END HIGHLIGHT */}
                     </TableRow>
                     <TableRow>
-                      <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
-                        <Collapse in={openRows.includes(entry.id)} timeout="auto" unmountOnExit>
+                      <TableCell
+                        style={{ paddingBottom: 0, paddingTop: 0 }}
+                        colSpan={8}
+                      >
+                        <Collapse
+                          in={openRows.includes(entry.id)}
+                          timeout="auto"
+                          unmountOnExit
+                        >
                           <div style={{ margin: "16px" }}>
                             <Table size="small">
                               <TableHead>
                                 <TableRow>
-                                  <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
-                                    
+                                  <TableCell
+                                    style={{
+                                      padding: "8px",
+                                      backgroundColor: "#6B76F8",
+                                      color: "#fff",
+                                    }}
+                                  >
+                                    Category
+                                  </TableCell>
+                                  <TableCell
+                                    style={{
+                                      padding: "8px",
+                                      backgroundColor: "#6B76F8",
+                                      color: "#fff",
+                                    }}
+                                  >
+                                    Item Name
+                                  </TableCell>
+                                  <TableCell
+                                    style={{
+                                      padding: "8px",
+                                      backgroundColor: "#6B76F8",
+                                      color: "#fff",
+                                    }}
+                                  >
+                                    Color
+                                  </TableCell>
+                                  <TableCell
+                                    style={{
+                                      padding: "8px",
+                                      backgroundColor: "#6B76F8",
+                                      color: "#fff",
+                                    }}
+                                  >
+                                    Size
+                                  </TableCell>
+                                  <TableCell
+                                    style={{
+                                      padding: "8px",
+                                      backgroundColor: "#6B76F8",
+                                      color: "#fff",
+                                    }}
+                                  >
                                     HSN CODE
                                   </TableCell>
-                                  <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
+                                  <TableCell
+                                    style={{
+                                      padding: "8px",
+                                      backgroundColor: "#6B76F8",
+                                      color: "#fff",
+                                    }}
+                                  >
                                     {/* Quantity */}
                                     QTY
                                   </TableCell>
-                                  <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
+                                  <TableCell
+                                    style={{
+                                      padding: "8px",
+                                      backgroundColor: "#6B76F8",
+                                      color: "#fff",
+                                    }}
+                                  >
                                     MRP
                                   </TableCell>
-                                  <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
-                                    
+                                  <TableCell
+                                    style={{
+                                      padding: "8px",
+                                      backgroundColor: "#6B76F8",
+                                      color: "#fff",
+                                    }}
+                                  >
                                     SALE RATE
                                   </TableCell>
-                                  <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
-                                    
+                                  <TableCell
+                                    style={{
+                                      padding: "8px",
+                                      backgroundColor: "#6B76F8",
+                                      color: "#fff",
+                                    }}
+                                  >
                                     DISCOUNT TYPE
                                   </TableCell>
-                                  <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
-                                    
+                                  <TableCell
+                                    style={{
+                                      padding: "8px",
+                                      backgroundColor: "#6B76F8",
+                                      color: "#fff",
+                                    }}
+                                  >
                                     DISCOUNT %
                                   </TableCell>
-                                  <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
-                                    
+                                  <TableCell
+                                    style={{
+                                      padding: "8px",
+                                      backgroundColor: "#6B76F8",
+                                      color: "#fff",
+                                    }}
+                                  >
                                     DISCOUNT AMOUNT
                                   </TableCell>
-                                  <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
+                                  <TableCell
+                                    style={{
+                                      padding: "8px",
+                                      backgroundColor: "#6B76F8",
+                                      color: "#fff",
+                                    }}
+                                  >
                                     GST %
                                   </TableCell>
-                                  <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
+                                  <TableCell
+                                    style={{
+                                      padding: "8px",
+                                      backgroundColor: "#6B76F8",
+                                      color: "#fff",
+                                    }}
+                                  >
                                     GST AMOUNT
                                   </TableCell>
-                                  <TableCell style={{ padding: "8px", backgroundColor: "#6B76F8", color: "#fff" }}>
-                                    NET  AMOUNT
+                                  <TableCell
+                                    style={{
+                                      padding: "8px",
+                                      backgroundColor: "#6B76F8",
+                                      color: "#fff",
+                                    }}
+                                  >
+                                    NET AMOUNT
                                   </TableCell>
                                 </TableRow>
                               </TableHead>
                               <TableBody>
                                 {entry.saleItems.map((item) => (
                                   <TableRow key={item.id}>
-                                    <TableCell style={{ padding: "8px" }}>{item.HSNCode}</TableCell>
-                                    <TableCell style={{ padding: "8px" }}>{item.Qty}</TableCell>
-                                    <TableCell style={{ padding: "8px" }}>{item.MRP}</TableCell>
-                                    <TableCell style={{ padding: "8px" }}>{item.Rate}</TableCell>
-                                    <TableCell style={{ padding: "8px" }}>{item.DiscType}</TableCell>
-                                    <TableCell style={{ padding: "8px" }}>{item.diskPersentage}%</TableCell>
-                                    <TableCell style={{ padding: "8px" }}>{item.DiscAmount}</TableCell>
-                                    <TableCell style={{ padding: "8px" }}>{item.GSTPercent}%</TableCell>
-                                    <TableCell style={{ padding: "8px" }}>{item.GSTAmount}</TableCell>
-                                    <TableCell style={{ padding: "8px" }}>{item.NetAmount}</TableCell>
+                                    <TableCell style={{ padding: "8px" }}>
+                                      {item.category}
+                                    </TableCell>
+                                    <TableCell style={{ padding: "8px" }}>
+                                      {item.itemName}
+                                    </TableCell>
+                                    <TableCell style={{ padding: "8px" }}>
+                                      {item.color}
+                                    </TableCell>
+                                    <TableCell style={{ padding: "8px" }}>
+                                      {item.size}
+                                    </TableCell>
+                                    <TableCell style={{ padding: "8px" }}>
+                                      {item.HSNCode}
+                                    </TableCell>
+                                    <TableCell style={{ padding: "8px" }}>
+                                      {item.Qty}
+                                    </TableCell>
+                                    <TableCell style={{ padding: "8px" }}>
+                                      {item.MRP}
+                                    </TableCell>
+                                    <TableCell style={{ padding: "8px" }}>
+                                      {item.Rate}
+                                    </TableCell>
+                                    <TableCell style={{ padding: "8px" }}>
+                                      {item.DiscType}
+                                    </TableCell>
+                                    <TableCell style={{ padding: "8px" }}>
+                                      {item.diskPersentage}%
+                                    </TableCell>
+                                    <TableCell style={{ padding: "8px" }}>
+                                      {item.DiscAmount}
+                                    </TableCell>
+                                    <TableCell style={{ padding: "8px" }}>
+                                      {item.GSTPercent}%
+                                    </TableCell>
+                                    <TableCell style={{ padding: "8px" }}>
+                                      {item.GSTAmount}
+                                    </TableCell>
+                                    <TableCell style={{ padding: "8px" }}>
+                                      {item.NetAmount}
+                                    </TableCell>
                                   </TableRow>
                                 ))}
                               </TableBody>
@@ -422,7 +635,11 @@ function SaleEntry() {
           />
         </div>
       </Fragment>
-      <div className={`modal fade ${open ? "show d-block" : ""}`} tabIndex={-1} style={{ background: "rgba(0, 0, 0, 0.5)" }}>
+      <div
+        className={`modal fade ${open ? "show d-block" : ""}`}
+        tabIndex={-1}
+        style={{ background: "rgba(0, 0, 0, 0.5)" }}
+      >
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
@@ -438,10 +655,18 @@ function SaleEntry() {
               <p>Are you sure you want to move this sale entry to trash?</p>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" onClick={handleClose}>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleClose}
+              >
                 Cancel
               </button>
-              <button type="button" className="btn btn-danger" onClick={handleDelete}>
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={handleDelete}
+              >
                 Move to Trash
               </button>
             </div>
