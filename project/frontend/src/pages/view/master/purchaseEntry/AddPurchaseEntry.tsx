@@ -24,6 +24,7 @@ import {
 } from "../../../../api/purchaseEntry";
 import { getParties } from "../../../../api/party";
 import { useNavigate, useParams } from "react-router-dom";
+import { result } from "lodash";
 
 const initialSaleEntry = {
   BillDate: getTodayDate(),
@@ -56,9 +57,22 @@ const AddPurchaseEntry = ({ isnew = false }) => {
   const [parties, setParties] = useState<any>([]);
   const [errors, setErrors] = useState<{ Party_Id?: string }>({});
   const [selectedParty, setSelectedParty] = useState<any>(null);
+  const [isNetAmount, setIsNetAmount] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
   console.log('-------- ROWS - purchase -------- : ',rows);
+
+  const checkNetAmount = (rows: any[]) => {
+    const hasZeroNetAmount = rows.some(row => parseFloat(row.netAmount || "0") === 0);
+    return hasZeroNetAmount;
+  };
+
+  // This effect will run whenever 'rows' changes
+  useEffect(() => {
+    setIsNetAmount(checkNetAmount(rows));
+    console.log('Net amount check result:', isNetAmount);
+  }, [rows]);
+
   useEffect(() => {
     getpartiesData();
   }, []);
@@ -322,7 +336,7 @@ const AddPurchaseEntry = ({ isnew = false }) => {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => handleSubmit()}
+          onClick={() => isNetAmount ? toast.error("Please Enter RATE") : handleSubmit()}
           disabled={loading}
         >
           Save

@@ -82,7 +82,9 @@ function SaleEntry() {
     getSaleEntries()
       .then((response) => {
         if (response && response.status === 200) {
-          const filteredData = response.data.data.map((entry: any) => ({
+          const filteredData = response.data.data
+          .filter((entry: any) => Number(entry.TotalAmount) != 0)
+          .map((entry: any) => ({
             id: entry.id,
             billNo: entry.BillNo,
             billDate: entry.BillDate,

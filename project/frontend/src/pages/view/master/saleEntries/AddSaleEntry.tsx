@@ -55,8 +55,20 @@ const AddSaleEntry = ({ isnew = false }) => {
   console.log("customer - state: ", customer);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [errors, setErrors] = useState<{ customerId?: string }>({});
+  const [isNetAmount, setIsNetAmount] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
+
+    const checkNetAmount = (rows: any[]) => {
+    const hasZeroNetAmount = rows.some(row => parseFloat(row.netAmount || "0") === 0);
+    return hasZeroNetAmount;
+  };
+
+  // This effect will run whenever 'rows' changes
+  useEffect(() => {
+    setIsNetAmount(checkNetAmount(rows));
+    console.log('Net amount check result:', isNetAmount);
+  }, [rows]);
 
   const fetchBillNo = async () => {
     const billNo = await getBillNo();
@@ -449,14 +461,14 @@ const AddSaleEntry = ({ isnew = false }) => {
               <button
                 type="button"
                 className="btn btn-primary"
-                onClick={() => handleSubmit()}
+                onClick={() => isNetAmount ? toast.error("Please Enter RATE") : handleSubmit()}
               >
                 Save
               </button>
               <button
                 type="button"
                 className="btn btn-primary"
-                onClick={() => handleSubmit(true)}
+                onClick={() => isNetAmount ? toast.error("Please Enter RATE") : handleSubmit()}
               >
                 Save & Print
               </button>
