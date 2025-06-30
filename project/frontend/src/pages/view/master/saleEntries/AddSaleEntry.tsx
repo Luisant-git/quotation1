@@ -7,7 +7,11 @@ import {
   CircularProgress,
   Autocomplete,
 } from "@mui/material";
-import { postSaleEntry } from "../../../../api/saleentry";
+import {
+  getSaleEntry,
+  postSaleEntry,
+  updateSaleEntry,
+} from "../../../../api/saleentry";
 import EditCell from "./EditCell";
 import { toast } from "react-toastify";
 import {
@@ -16,6 +20,8 @@ import {
   printSaleEntry,
 } from "../../../../utils/common";
 import { getCustomers } from "../../../../api/customer";
+import { useNavigate, useParams } from "react-router-dom";
+import * as Yup from "yup";
 
 // Initial state for the sale entry form
 const initialSaleEntry = {
@@ -27,37 +33,93 @@ const initialSaleEntry = {
   UPIAmount: 0,
   customerId: 0,
   BillNo: "",
+  RefNo: Math.floor(Math.random() * 1000000).toString(),
 };
 
-const AddSaleEntry = () => {
+const validationSchema = Yup.object().shape({
+  customerId: Yup.number()
+    .min(1, "Customer is required")
+    .required("Customer is required"),
+});
+
+const AddSaleEntry = ({ isnew = false }) => {
   const [saleEntry, setSaleEntry] = useState(initialSaleEntry);
   const [loading, setLoading] = useState(false);
-  const [openModal, setOpenModal] = useState(false); // State to control the modal
+  const [openModal, setOpenModal] = useState(false);
   const firstInputRef = useRef<HTMLInputElement>(null);
   const [rows, setRows] = useState<any>([]);
   const [totalAmount, setTotalAmount] = useState(0);
   const [totalQty, setTotalQty] = useState(0);
   const [customer, setCustomer] = useState<any>([]);
-  const [selectedCustomer, setSelectedCustomer] = useState<any>(null); // State to track selected customer in Autocomplete
-  
-const fetchBillNo = async () => {
-  const billNo = await getBillNo();
-  setSaleEntry((prev) => ({
-    ...prev,
-    BillNo: prev.BillNo || billNo,
-  }));
-}
+  const [mobileNo, setMobileNo] = useState("");
+  console.log("customer - state: ", customer);
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  const [errors, setErrors] = useState<{ customerId?: string }>({});
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  useEffect(()=>{
-    fetchBillNo()
-  },[])
+  const fetchBillNo = async () => {
+    const billNo = await getBillNo();
+    setSaleEntry((prev) => ({
+      ...prev,
+      BillNo: prev.BillNo || billNo,
+    }));
+  };
 
-  // Focus the first input field on component mount
   useEffect(() => {
-    if (firstInputRef.current) {
-      firstInputRef.current.focus();
-    }
+    fetchBillNo();
+    getCustomerDate();
   }, []);
+
+  useEffect(() => {
+    if (!isnew && id && customer.length > 0) {
+      getSaleData();
+    }
+  }, [isnew, id, customer]);
+
+  const getSaleData = () => {
+    setLoading(true);
+    getSaleEntry(id)
+      .then((response) => {
+        if (response) {
+          setSaleEntry(response?.data?.data);
+          console.log("@@@@SALE ENTRY DATA FOR EDIT@@@", response?.data?.data);
+          const mappedRows =
+            response?.data?.data?.saleItems?.map((item: any) => ({
+              id: item.id,
+              itemid: item.Item_Id,
+              itemCode: item.ItemMaster?.itemCode,
+              itemName: item.ItemMaster?.itemName,
+              category: item.ItemMaster?.category,
+              color: item.ItemMaster?.color,
+              size: item.ItemMaster?.size,
+              hsnCode: item?.HSNCode,
+              gstPercent: item?.DiscPercent,
+              qty: item?.Qty,
+              mrp: item?.MRP,
+              saleRate: item?.Rate,
+              discType: item?.DiscType,
+              diskPersentage: item?.DiscPercent,
+              discAmount: item?.DiscAmount,
+              taxableAmount: item?.Amount,
+              gstAmount: item?.GSTAmount,
+              netAmount: item?.NetAmount,
+            })) || [];
+
+          setRows(mappedRows);
+          const selectedCustomer = customer.find(
+            (cust: any) => cust.customercode === response?.data.data.customerId
+          );
+          setSelectedCustomer(selectedCustomer);
+          setLoading(false);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching sale data:", error);
+        toast.error("Error fetching sale data", { autoClose: 3000 });
+        setLoading(false);
+      });
+  };
 
   const getCustomerDate = () => {
     getCustomers().then((response) => {
@@ -66,10 +128,6 @@ const fetchBillNo = async () => {
       }
     });
   };
-
-  useEffect(() => {
-    getCustomerDate();
-  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -80,18 +138,32 @@ const fetchBillNo = async () => {
   };
 
   const handleSubmit = async (print: boolean = false) => {
+    try {
+      await validationSchema.validate(saleEntry, { abortEarly: false });
+      setErrors({});
+    } catch (validationErrors) {
+      const formattedErrors: { customerId?: string } = {};
+      (validationErrors as Yup.ValidationError).inner.forEach((error: any) => {
+        formattedErrors[error.path as keyof typeof formattedErrors] =
+          error.message;
+      });
+      setErrors(formattedErrors);
+      return;
+    }
+
     setLoading(true);
     try {
-      const response = await postSaleEntry({
+      const payload = {
         ...saleEntry,
+        id: undefined,
+        TotalAmount: parseFloat(totalAmount.toString()) || 0,
         TotalPaidAmount: parseFloat(saleEntry.TotalPaidAmount.toString()) || 0,
         CardAmount: parseFloat(saleEntry.CardAmount.toString()) || 0,
         UPIAmount: parseFloat(saleEntry.UPIAmount.toString()) || 0,
-        TotalAmount: parseFloat(totalAmount.toString()) || 0,
-        BillNo: saleEntry.BillNo || (await getBillNo()),
-        TotalQty: parseFloat(totalQty.toString()),
         CreatedDate: new Date().toISOString(),
+        TotalQty: parseFloat(totalQty.toString()),
         saleItems: rows.map((row: any) => ({
+          ...(isnew ? {} : { id: row.id }),
           Item_Id: row.itemid,
           HSNCode: row.hsnCode,
           DiscPercent: parseFloat(row.gstPercent.toString()),
@@ -104,24 +176,29 @@ const fetchBillNo = async () => {
           NetAmount: parseFloat(row.netAmount.toString()),
           Amount: parseFloat(row.netAmount.toString()),
         })),
-      });
-      // console.log(" Sale Entry Response:", response);
+      };
+
+      const response = isnew
+        ? await postSaleEntry(payload)
+        : await updateSaleEntry(id, payload);
+
       if (response.success) {
         setSaleEntry(initialSaleEntry);
         setRows([]);
         setTotalAmount(0);
         setTotalQty(0);
-        setSelectedCustomer(null); // Clear the selected customer in Autocomplete
-        toast.success("Sale Entry Added Successfully", { autoClose: 1000 });
+        setSelectedCustomer(null);
+        toast.success("Sale Entry Saved Successfully", { autoClose: 1000 });
         if (print) {
           printSaleEntry(response?.data);
         }
+        navigate("/sale-entries");
       } else {
-        toast.error("Error creating sale entry", { autoClose: 1000 });
+        toast.error("Error saving sale entry", { autoClose: 1000 });
       }
     } catch (error) {
-      console.error("Error creating sale entry:", error);
-      toast.error("Error creating sale entry", { autoClose: 3000 });
+      console.error("Error saving sale entry:", error);
+      toast.error("Error saving sale entry", { autoClose: 3000 });
     } finally {
       setLoading(false);
       setOpenModal(false);
@@ -130,7 +207,6 @@ const fetchBillNo = async () => {
 
   const [isReady, setIsReady] = React.useState(false);
 
-  // Simulate a delay to set the component as ready
   useEffect(() => {
     setTimeout(() => {
       setIsReady(true);
@@ -172,31 +248,35 @@ const fetchBillNo = async () => {
 
         {/* Customer */}
         <Grid item xs={12} sm={3}>
-          <Autocomplete
-            disablePortal
-            size="small"
-            options={customer}
-            value={selectedCustomer}
-            onChange={(_event, newValue) => {
-              setSelectedCustomer(newValue);
-              if (newValue) {
-                setSaleEntry((prev) => ({
-                  ...prev,
-                  customerId: newValue?.customercode,
-                }));
-              } else {
-                setSaleEntry((prev) => ({
-                  ...prev,
-                  customerId: 0,
-                }));
-              }
-            }}
-            getOptionLabel={(option) => option.customername}
-            renderInput={(params) => (
-              <TextField {...params} label="Customer" fullWidth />
-            )}
-          />
-        </Grid>
+  <TextField
+    label="Customer"
+    size="small"
+    fullWidth
+    value={selectedCustomer?.customername || ''}
+    onChange={(e) => {
+      const customerName = e.target.value;
+      // Find customer by name (case insensitive)
+      const matchedCustomer = customer.find(
+        (cust : any) => cust.customername.toLowerCase() === customerName.toLowerCase()
+      );
+      
+      if (matchedCustomer) {
+        setSelectedCustomer(matchedCustomer);
+        setSaleEntry(prev => ({
+          ...prev,
+          customerId: matchedCustomer.customercode,
+        }));
+      } else {
+        setSelectedCustomer(null);
+        setSaleEntry(prev => ({
+          ...prev,
+          customerId: 0,
+        }));
+      }
+    }}
+    InputLabelProps={{ shrink: true }}
+  />
+</Grid>
 
         {/* Mobile No */}
         <Grid item xs={12} sm={3}>
@@ -205,7 +285,31 @@ const fetchBillNo = async () => {
             name="mobileNo"
             type="number"
             size="small"
-            //  value={selectedCustomer?.Mobile || ""}
+            value={mobileNo}
+            onChange={(e) => {
+              const enteredMobile = e.target.value;
+              setMobileNo(enteredMobile);
+
+              // Find customer with matching mobile number
+              const matchedCustomer = customer.find(
+                (cust: any) => cust.Mobile === enteredMobile
+              );
+
+              if (matchedCustomer) {
+                setSelectedCustomer(matchedCustomer);
+                setSaleEntry((prev) => ({
+                  ...prev,
+                  customerId: matchedCustomer.customercode,
+                }));
+              } else if (enteredMobile === "") {
+                // Clear selection if mobile field is empty
+                setSelectedCustomer(null);
+                setSaleEntry((prev) => ({
+                  ...prev,
+                  customerId: 0,
+                }));
+              }
+            }}
             fullWidth
             InputLabelProps={{ shrink: true }}
           />

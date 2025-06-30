@@ -10,6 +10,8 @@ export async function getSaleEntries() {
 }
 export async function getSaleEntry(id: any) {
   const response = await axiosServices.get(`${endpoints.key}/${id}`);
+  console.log('SALES ENTRY RESPONSE API', response);
+  
   return response;
 }
 export async function postSaleEntry(data: any) {

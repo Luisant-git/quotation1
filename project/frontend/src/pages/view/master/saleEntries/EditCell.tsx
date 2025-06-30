@@ -62,6 +62,8 @@ const DataTable: React.FC<DataTableProps> = ({
       color: string;
     }[]
   >([]);
+  console.log('SALES - ENTRY - EDIT',rows, saleEntry);
+  
   const [barcodeInput, setBarcodeInput] = useState<string>("");
   const suggestionsRef = useRef<HTMLUListElement>(null); // Ref for the suggestions list
 
@@ -136,6 +138,8 @@ const DataTable: React.FC<DataTableProps> = ({
     try {
       const response = await getItems();
       if (response) {
+        console.log("RESPONSE - HANDLEBARCODESCAN",response);
+        
         const item = response.data.data.find(
           (item: { itemCode: string }) =>
             item.itemCode.replace(/\s+/g, "").toLowerCase() ===

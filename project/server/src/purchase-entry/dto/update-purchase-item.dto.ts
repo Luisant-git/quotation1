@@ -55,14 +55,6 @@ export class UpdatePurchaseItemDto {
    @IsDecimal()
    NetAmount: number;
  
-   @ApiProperty({ example: '2024-03-16T12:00:00Z', description: 'Timestamp of creation' })
-   @IsDate()
-   createdAt: Date;
- 
-   @ApiProperty({ example: '2024-03-16T14:00:00Z', description: 'Timestamp of last update' })
-   @IsDate()
-   updatedAt: Date;
- 
    @ApiProperty({ example: 1001, description: 'User who created the entry' })
    @IsInt()
    createdBy: number;

@@ -58,7 +58,7 @@ const AddPurchaseEntry = ({ isnew = false }) => {
   const [selectedParty, setSelectedParty] = useState<any>(null);
   const { id } = useParams();
   const navigate = useNavigate();
-
+  console.log('-------- ROWS - purchase -------- : ',rows);
   useEffect(() => {
     getpartiesData();
   }, []);

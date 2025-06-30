@@ -12,30 +12,56 @@ import { UpdateSaleItemDto } from './update-sale-item.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateSaleEntryDto {
+  @ApiProperty()
   @IsOptional()
   @IsString()
-  billNo?: string;
+  BillNo?: string;
 
-  @IsOptional()
-  @IsDate()
-  billDate?: string;
-
+  @ApiProperty()
   @IsOptional()
   @IsString()
-  customerId?: number;
+  BillDate?: string;
 
-  @IsOptional()
-  @IsString()
-  remarks?: string;
-
+  @ApiProperty()
   @IsOptional()
   @IsInt()
-  totalQty?: number;
+  customerId?: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  Remarks?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  TotalQty?: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  TotalAmount?: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  TotalPaidAmount?: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  CardAmount?: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  UPIAmount?: number;
 
   @ApiProperty({ description: 'createdBy', required: true, default: 0 })
   @IsOptional()
   @IsNumber()
   createdBy: number;
+
   @ApiProperty({ description: 'updatedBy', required: false, default: 0 })
   @IsOptional()
   @IsNumber()
@@ -46,22 +72,17 @@ export class UpdateSaleEntryDto {
   @IsNumber()
   deletedBy?: number;
 
+    @ApiProperty({ description: 'Delete_Flg', required: false, default: 0 })
   @IsOptional()
   @IsNumber()
-  totalAmount?: number;
+  Delete_Flg?: number;
 
+    @ApiProperty({ description: 'FinancialYearId', required: false, default: 0 })
   @IsOptional()
   @IsNumber()
-  totalPaidCash?: number;
+  FinancialYearId?: number;
 
-  @IsOptional()
-  @IsNumber()
-  cardAmount?: number;
-
-  @IsOptional()
-  @IsNumber()
-  upiAmount?: number;
-
+  @ApiProperty({ type: [UpdateSaleItemDto] })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })

@@ -65,6 +65,7 @@ const DataTable: React.FC<DataTableProps> = ({
       mrp: string;
     }[]
   >([]);
+  console.log('PURCHASE - ENTRY - EDIT',rows, saleEntry);
   const [barcodeInput, setBarcodeInput] = useState<string>("");
 
   // Calculate total quantity and total amount

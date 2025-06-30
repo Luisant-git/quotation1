@@ -1,31 +1,91 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsOptional, IsString, IsNumber } from 'class-validator';
+import { IsInt, IsOptional, IsString, IsNumber, IsDate } from 'class-validator';
 
 export class UpdateSaleItemDto {
+  @ApiProperty()
   @IsOptional()
   @IsInt()
   id?: number;
 
+  @ApiProperty()
   @IsOptional()
-  @IsNumber()
-  gstAmount?: number;
+  @IsInt()
+  Item_Id?: number;
 
+  @ApiProperty()
   @IsOptional()
   @IsNumber()
-  netAmount?: number;
+  Qty?: number;
 
+  @ApiProperty()
   @IsOptional()
   @IsNumber()
-  discAmount?: number;
+  MRP?: number;
 
+  @ApiProperty()
   @IsOptional()
   @IsNumber()
-  taxableAmount?: number;
+  Rate?: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  Amount?: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  DiscType?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  DiscPercent?: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  DiscAmount?: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  GSTAmount?: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  HSNCode?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  GSTPercent?: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  NetAmount?: number;
+
+  @ApiProperty({
+    example: '2024-03-16T12:00:00Z',
+    description: 'Timestamp of creation',
+  })
+  @IsDate()
+  createdAt: Date;
+
+  @ApiProperty({
+    example: '2024-03-16T14:00:00Z',
+    description: 'Timestamp of last update',
+  })
+  @IsDate()
+  updatedAt: Date;
 
   @ApiProperty({ description: 'createdBy', required: true, default: 0 })
   @IsOptional()
   @IsNumber()
   createdBy: number;
+
   @ApiProperty({ description: 'updatedBy', required: false, default: 0 })
   @IsOptional()
   @IsNumber()
@@ -35,52 +95,4 @@ export class UpdateSaleItemDto {
   @IsOptional()
   @IsNumber()
   deletedBy?: number;
-
-  @IsOptional()
-  @IsInt()
-  qty?: number;
-
-  @IsOptional()
-  @IsNumber()
-  mrp?: number;
-
-  @IsOptional()
-  @IsNumber()
-  diskPersentage?: number;
-
-  @IsOptional()
-  @IsNumber()
-  saleRate?: number;
-
-  @IsOptional()
-  @IsString()
-  discType?: string;
-
-  @IsOptional()
-  @IsString()
-  itemCode?: string;
-
-  @IsOptional()
-  @IsString()
-  category?: string;
-
-  @IsOptional()
-  @IsString()
-  itemName?: string;
-
-  @IsOptional()
-  @IsString()
-  color?: string;
-
-  @IsOptional()
-  @IsString()
-  size?: string;
-
-  @IsOptional()
-  @IsString()
-  hsnCode?: string;
-
-  @IsOptional()
-  @IsNumber()
-  gstPercent?: number;
 }

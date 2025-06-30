@@ -74,6 +74,8 @@ function SaleEntry() {
   );
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  console.log("sale entry home page table", saleEntries);
+  
 
   const fetchSaleEntries = useCallback(() => {
     setLoading(true);

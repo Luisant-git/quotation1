@@ -1,4 +1,13 @@
-import { IsInt, IsOptional, IsString, IsDate, IsDecimal, ValidateNested, IsArray, IsNumber } from 'class-validator';
+import {
+  IsInt,
+  IsOptional,
+  IsString,
+  IsDate,
+  IsDecimal,
+  ValidateNested,
+  IsArray,
+  IsNumber,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { CreateSaleItemDto } from './create-sale-item.dto';
@@ -45,22 +54,35 @@ export class CreateSaleEntryDto {
   @IsDecimal()
   TotalPaidAmount: number;
 
-  @ApiProperty({ example: 0, description: 'Deletion flag (0 = Active, 1 = Deleted)' })
+  @ApiProperty({
+    example: 0,
+    description: 'Deletion flag (0 = Active, 1 = Deleted)',
+  })
   @IsInt()
   Delete_Flg: number;
 
-
-  @ApiProperty({ example: '2024-03-16T12:00:00Z', description: 'Creation date' })
+  @ApiProperty({
+    example: '2024-03-16T12:00:00Z',
+    description: 'Creation date',
+  })
   @IsDate()
   @Type(() => Date)
   CreatedDate: Date;
 
-  @ApiProperty({ example: 'adminUser', description: 'User who modified the entry', required: false })
+  @ApiProperty({
+    example: 'adminUser',
+    description: 'User who modified the entry',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   ModifiedBy?: string;
 
-  @ApiProperty({ example: '2024-03-16T14:00:00Z', description: 'Modification date', required: false })
+  @ApiProperty({
+    example: '2024-03-16T14:00:00Z',
+    description: 'Modification date',
+    required: false,
+  })
   @IsOptional()
   @IsDate()
   @Type(() => Date)
@@ -74,18 +96,26 @@ export class CreateSaleEntryDto {
   @IsOptional()
   @IsNumber()
   updatedBy?: number;
-  
-  @ApiProperty({ example: 1, description: 'Concern ID' })
-@IsInt()
-concernId: number;
 
+  @ApiProperty({ example: 1, description: 'Concern ID' })
+  @IsInt()
+  concernId: number;
 
   @ApiProperty({ description: 'deletedBy', required: false, default: 0 })
   @IsOptional()
   @IsNumber()
   deletedBy?: number;
 
-  @ApiProperty({ example: '2024-03-17T10:00:00Z', description: 'Deletion date', required: false })
+  @ApiProperty({ description: 'FinancialYearId', required: false, default: 1 })
+  @IsOptional()
+  @IsNumber()
+  FinancialYearId?: number;
+
+  @ApiProperty({
+    example: '2024-03-17T10:00:00Z',
+    description: 'Deletion date',
+    required: false,
+  })
   @IsOptional()
   @IsDate()
   @Type(() => Date)

@@ -43,7 +43,7 @@ export const Routedata = [
   { id: 11, path: `master/dia`, element: <Dia /> },
   { id: 12, path: `item`, element: <Item /> },
   { id: 13, path: `sale-entries`, element: <SaleEntry /> },
-  { id: 14, path: `sale-entry`, element: <AddSaleEntry /> },
+  { id: 14, path: `sale-entry`, element: <AddSaleEntry isnew /> },
   { id: 29, path: `sale-entry/:id`, element: <AddSaleEntry /> },
   { id: 15, path: `purchase-entries`, element: <PurchaseEntry /> },
   { id: 16, path: `purchase-entry`, element: <AddPurchaseEntry isnew /> },
