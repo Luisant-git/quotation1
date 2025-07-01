@@ -69,7 +69,7 @@ const DataTable: React.FC<DataTableProps> = ({
   const [barcodeInput, setBarcodeInput] = useState<string>("");
 
   // Calculate total quantity and total amount
-  const totalQty = rows.reduce((sum, row) => sum + (row.qty || 0), 0);
+  const totalQty = rows.reduce((sum, row) => sum + (parseInt(row.qty?.toString() || "0") || 0), 0);
   const totalAmount = rows
     .reduce((sum, row) => sum + parseFloat(row.netAmount?.toString() || "0"), 0)
     .toFixed(0);

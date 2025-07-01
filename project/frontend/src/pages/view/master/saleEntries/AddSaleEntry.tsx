@@ -59,15 +59,17 @@ const AddSaleEntry = ({ isnew = false }) => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-    const checkNetAmount = (rows: any[]) => {
-    const hasZeroNetAmount = rows.some(row => parseFloat(row.netAmount || "0") === 0);
+  const checkNetAmount = (rows: any[]) => {
+    const hasZeroNetAmount = rows.some(
+      (row) => parseFloat(row.netAmount || "0") === 0
+    );
     return hasZeroNetAmount;
   };
 
   // This effect will run whenever 'rows' changes
   useEffect(() => {
     setIsNetAmount(checkNetAmount(rows));
-    console.log('Net amount check result:', isNetAmount);
+    console.log("Net amount check result:", isNetAmount);
   }, [rows]);
 
   const fetchBillNo = async () => {
@@ -208,9 +210,11 @@ const AddSaleEntry = ({ isnew = false }) => {
       } else {
         toast.error("Error saving sale entry", { autoClose: 1000 });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving sale entry:", error);
-      toast.error("Error saving sale entry", { autoClose: 3000 });
+      const backendMsg =
+        error?.response?.data?.error || "Error saving sale entry";
+      toast.error(backendMsg, { autoClose: 5000 });
     } finally {
       setLoading(false);
       setOpenModal(false);
@@ -260,35 +264,36 @@ const AddSaleEntry = ({ isnew = false }) => {
 
         {/* Customer */}
         <Grid item xs={12} sm={3}>
-  <TextField
-    label="Customer"
-    size="small"
-    fullWidth
-    value={selectedCustomer?.customername || ''}
-    onChange={(e) => {
-      const customerName = e.target.value;
-      // Find customer by name (case insensitive)
-      const matchedCustomer = customer.find(
-        (cust : any) => cust.customername.toLowerCase() === customerName.toLowerCase()
-      );
-      
-      if (matchedCustomer) {
-        setSelectedCustomer(matchedCustomer);
-        setSaleEntry(prev => ({
-          ...prev,
-          customerId: matchedCustomer.customercode,
-        }));
-      } else {
-        setSelectedCustomer(null);
-        setSaleEntry(prev => ({
-          ...prev,
-          customerId: 0,
-        }));
-      }
-    }}
-    InputLabelProps={{ shrink: true }}
-  />
-</Grid>
+          <TextField
+            label="Customer"
+            size="small"
+            fullWidth
+            value={selectedCustomer?.customername || ""}
+            onChange={(e) => {
+              const customerName = e.target.value;
+              // Find customer by name (case insensitive)
+              const matchedCustomer = customer.find(
+                (cust: any) =>
+                  cust.customername.toLowerCase() === customerName.toLowerCase()
+              );
+
+              if (matchedCustomer) {
+                setSelectedCustomer(matchedCustomer);
+                setSaleEntry((prev) => ({
+                  ...prev,
+                  customerId: matchedCustomer.customercode,
+                }));
+              } else {
+                setSelectedCustomer(null);
+                setSaleEntry((prev) => ({
+                  ...prev,
+                  customerId: 0,
+                }));
+              }
+            }}
+            InputLabelProps={{ shrink: true }}
+          />
+        </Grid>
 
         {/* Mobile No */}
         <Grid item xs={12} sm={3}>
@@ -461,14 +466,22 @@ const AddSaleEntry = ({ isnew = false }) => {
               <button
                 type="button"
                 className="btn btn-primary"
-                onClick={() => isNetAmount ? toast.error("Please Enter RATE") : handleSubmit()}
+                onClick={() =>
+                  isNetAmount
+                    ? toast.error("Please Enter RATE")
+                    : handleSubmit()
+                }
               >
                 Save
               </button>
               <button
                 type="button"
                 className="btn btn-primary"
-                onClick={() => isNetAmount ? toast.error("Please Enter RATE") : handleSubmit()}
+                onClick={() =>
+                  isNetAmount
+                    ? toast.error("Please Enter RATE")
+                    : handleSubmit()
+                }
               >
                 Save & Print
               </button>
