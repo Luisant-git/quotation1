@@ -214,7 +214,7 @@ const AddSaleEntry = ({ isnew = false }) => {
       console.error("Error saving sale entry:", error);
       const backendMsg =
         error?.response?.data?.error || "Error saving sale entry";
-      toast.error(backendMsg, { autoClose: 5000 });
+      toast.error(backendMsg, { autoClose: 2000 });
     } finally {
       setLoading(false);
       setOpenModal(false);
