@@ -207,14 +207,15 @@ const AddSaleEntry = ({ isnew = false }) => {
           printSaleEntry(response?.data);
         }
         navigate("/sale-entries");
-      } else {
-        toast.error("Error saving sale entry", { autoClose: 1000 });
-      }
+      } 
+      // else {
+      //   toast.error("Error saving sale entry", { autoClose: 1000 });
+      // }
     } catch (error: any) {
       console.error("Error saving sale entry:", error);
       const backendMsg =
         error?.response?.data?.error || "Error saving sale entry";
-      toast.error(backendMsg, { autoClose: 2000 });
+      toast.error(backendMsg, { autoClose: 5000 });
     } finally {
       setLoading(false);
       setOpenModal(false);
