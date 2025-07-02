@@ -10,8 +10,8 @@ export class PrismaService
     super({
       // 👇 Set transaction timeout (10 seconds globally)
       transactionOptions: {
-        maxWait: 10000, // Max time to wait for a transaction (10s)
-        timeout: 10000, // Max time the transaction can run (10s)
+        maxWait: 30000, // Max time to wait for a transaction (30s)
+        timeout: 30000, // Max time the transaction can run (30s)
       },
     });
   }
