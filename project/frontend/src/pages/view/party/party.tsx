@@ -68,7 +68,9 @@ function Party() {
   const itemsPerPage = 15;
   const [open, setOpen] = useState(false);
   const [openView, setOpenView] = useState(false);
-  const [selectedPartyCode, setSelectedPartyCode] = useState<number | null>(null);
+  const [selectedPartyCode, setSelectedPartyCode] = useState<number | null>(
+    null
+  );
   const [selectedParty, setSelectedParty] = useState<PartyData | null>(null);
   const [loading, setLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -113,7 +115,10 @@ function Party() {
       });
   };
 
-  const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
+  const handlePageChange = (
+    _event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
     setCurrentPage(page);
   };
 
@@ -122,7 +127,9 @@ function Party() {
     getParties()
       .then((response) => {
         if (response && response.status === 200) {
-          const activeParties = response.data.filter((party: PartyData) => party.Delete_flg !== 1);
+          const activeParties = response.data.filter(
+            (party: PartyData) => party.Delete_flg !== 1
+          );
           setPartiesData(activeParties);
           setFilteredData(activeParties);
         }
@@ -144,8 +151,14 @@ function Party() {
   const currentParties = filteredData.slice(indexOfFirstItem, indexOfLastItem);
 
   const handleSearch = (searchTerm: string) => {
-    const filtered = partiesData.filter((party) =>
-      party.Ptyname.toLowerCase().includes(searchTerm.toLowerCase())
+    const lowerSearch = (searchTerm || "").toLowerCase();
+    const filtered = partiesData.filter(
+      (party) =>
+        (party.Ptyname || "").toLowerCase().includes(lowerSearch) ||
+        (party.Add1 || "").toLowerCase().includes(lowerSearch) ||
+        (party.Mobile || "").toLowerCase().includes(lowerSearch) ||
+        (party.E_mail || "").toLowerCase().includes(lowerSearch) ||
+        (party.GSTNO || "").toLowerCase().includes(lowerSearch)
     );
     setFilteredData(filtered);
   };
@@ -164,13 +177,13 @@ function Party() {
   return (
     <Fragment>
       <Pageheader
-  path="/party/add"
-  title="Party Management"
-  currentpage="Party List"
-  activepage="party"
-  onSearch={handleSearch}
-  onSort={handleSort}
-/>
+        path="/party/add"
+        title="Party Management"
+        currentpage="Party List"
+        activepage="party"
+        onSearch={handleSearch}
+        onSort={handleSort}
+      />
 
       {loading ? (
         <ItemSkeleton

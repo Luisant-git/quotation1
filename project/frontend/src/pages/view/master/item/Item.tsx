@@ -1,6 +1,6 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Col } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import SpkButton from "../../../../@spk-reusable-components/reusable-uielements/spk-button";
 import SpkTablescomponent from "../../../../@spk-reusable-components/reusable-tables/tables-component";
 import ItemModel from "./ItemModel";
@@ -13,6 +13,8 @@ import {
 import { toast } from "react-toastify";
 import ItemSkeleton from "../../../../components/skeleton/Skeleton";
 import { CircularProgress } from "@mui/material";
+import PageheaderQuotaion from "../../../../components/page-header/PageheadQuotaion";
+import SearchBox from "../../../../components/page-header/SearchBox";
 
 interface ItemData {
   id?: number;
@@ -29,6 +31,7 @@ interface ItemData {
   Item_AliasName?: string;
   Color_AliasName?: string;
   Size_AliasName?: string;
+  PurchaseDetail?: [];
 }
 
 function Item() {
@@ -42,6 +45,7 @@ function Item() {
   const [loading, setLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(""); // <-- Add this
 
   const handleClickOpenDelete = (id: number) => {
     setSelectedItemId(id);
@@ -121,7 +125,7 @@ function Item() {
 
   const handleSubmitModal = (data: ItemData) => {
     setSubmitLoading(true);
-    const { id, ...payload } = data;
+    const { id, PurchaseDetail, ...payload } = data;
 
     const apiCall = modalData ? updateItem(id, payload) : postItem(payload);
 
@@ -170,21 +174,58 @@ function Item() {
     fetchItems();
   }, []);
 
+  // --- SEARCH LOGIC ---
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const searchedData = useMemo(
+    () =>
+      filteredData.filter(
+        (item) =>
+          (item.itemName || "")
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          (item.itemCode || "")
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          (item.category || "")
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          (item.color || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (item.size || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (item.hsnCode || "").toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    [filteredData, searchTerm]
+  );
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = searchedData.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <Fragment>
-      <Col xl={12} className="mb-3 mt-2 text-end">
-        <SpkButton
-          onClick={() => handleOpenModal()}
-          Buttonvariant="primary"
-          Customclass="me-0"
-        >
-          <i className="ri-add-line me-1"></i> Create
-        </SpkButton>
-      </Col>
+      <div className="row mb-1 align-items-center">
+        <div className="col-11 pe-0">
+          <SearchBox
+            searchTerm={searchTerm}
+            handleSearch={handleSearch}
+            title="Item Entries"
+            currentpage="Active Item Entries"
+            activepage="Item Entries"
+          />
+        </div>
+        <div className="col-1 p-2">
+          <SpkButton
+            Size="sm"
+            onClick={() => handleOpenModal()}
+            Buttonvariant="primary"
+            // Customclass="me-0"
+          >
+            <i className="ri-add-line"></i> Create
+          </SpkButton>
+        </div>
+      </div>
 
       {loading ? (
         <ItemSkeleton
@@ -215,14 +256,13 @@ function Item() {
                 { title: "HSN CODE" },
                 { title: "GST %" },
                 // { title: "ITEM CODE" },
-
                 { title: "ACTIVE" },
                 { title: "ACTIONS" },
               ]}
-              totalItems={filteredData?.length}
+              totalItems={searchedData?.length}
               itemsPerPage={itemsPerPage}
               currentPage={currentPage}
-              onPageChange={handlePageChange}
+              onPageChange={(_e, page) => setCurrentPage(page)}
             >
               {currentItems.map((item: ItemData) => (
                 <tr key={item.id}>
@@ -233,7 +273,6 @@ function Item() {
                   <td>{item.hsnCode}</td>
                   <td>{item.gstPercent}%</td>
                   {/* <td>{item.itemCode}</td> */}
-
                   <td>
                     {item.active ? (
                       <span className="badge bg-success">Active</span>

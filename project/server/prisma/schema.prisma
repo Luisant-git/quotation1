@@ -161,7 +161,7 @@ model ClothDetail {
 
 model ItemMaster {
   id                Int             @id @default(autoincrement())
-  itemCode          String          @unique
+  itemCode          String          
   category          String?          @db.VarChar(30)
   Cate_AliasName    String?          @db.VarChar(5)
   itemName          String?          @db.VarChar(30)
@@ -187,8 +187,8 @@ model ItemMaster {
   PurchaseDetail    PurchaseItems[]
   SaleDetail        SaleItems[]
 
-@@unique([itemCode, itemName, hsnCode, size, color], name: "ItemMaster_composite_unique")
-@@unique([itemName])
+@@unique([itemName, category, size, color], name: "ItemMaster_composite_unique")
+// @@unique([itemName])
 }
 
 model SaleEntry {
