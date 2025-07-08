@@ -133,13 +133,12 @@ export class SaleEntryService {
         BillNo: data.BillNo,
         TotalQty: data.TotalQty,
         concernId: data.concernId,
+        customername: data.customername,
+        Mobile: data.Mobile,
         createdBy: data.createdBy,
         CreatedDate: new Date(),
         financialYear: data.FinancialYearId
           ? { connect: { HeaderId: data.FinancialYearId } }
-          : undefined,
-        customer: data.customerId
-          ? { connect: { customercode: data.customerId } }
           : undefined,
         saleItems: {
           create: data.saleItems.map((item) => ({
@@ -165,7 +164,6 @@ export class SaleEntryService {
           data: createData,
           include: {
             saleItems: true,
-            customer: true,
             financialYear: true,
           },
         });
@@ -266,11 +264,12 @@ export class SaleEntryService {
           data: { Qty: availableQty - deduction },
         });
 
+        // When incrementing back to purchaseEntry
         await this.prisma.purchaseEntry.update({
           where: { id: pi.purchaseEntryId },
           data: {
-            TotalQty: { decrement: deduction },
-            TotalAmount: { decrement: deduction * pi.Rate.toNumber() },
+            ActualQty: { increment: remainingQty },
+            TotalAmount: { increment: remainingQty * pi.Rate.toNumber() },
           },
         });
 
@@ -288,7 +287,6 @@ export class SaleEntryService {
               ItemMaster: true,
             },
           },
-          customer: true,
         },
         where: {
           Delete_Flg: 0,
@@ -304,11 +302,34 @@ export class SaleEntryService {
     }
   }
 
+  async findAllCustomers() {
+    try {
+      // Get distinct customername and Mobile where not null
+      return await this.prisma.saleEntry.findMany({
+        where: {
+          customername: { not: null },
+          Mobile: { not: null },
+          Delete_Flg: 0,
+        },
+        select: {
+          customername: true,
+          Mobile: true,
+        },
+        distinct: ['customername', 'Mobile'],
+        orderBy: { id: 'desc' },
+      });
+    } catch (error) {
+      throw new BadRequestException(
+        `Failed to retrieve customers: ${error.message}`,
+      );
+    }
+  }
+
   async getDeletedAll() {
     try {
       return await this.prisma.saleEntry.findMany({
         where: { Delete_Flg: 1 },
-        include: { saleItems: true, customer: true },
+        include: { saleItems: true },
         orderBy: { id: 'desc' },
       });
     } catch (error) {
@@ -469,7 +490,7 @@ export class SaleEntryService {
       // 1. Get the complete existing record with saleItems
       const existing = await this.prisma.saleEntry.findUnique({
         where: { id },
-        include: { saleItems: true, customer: true, financialYear: true },
+        include: { saleItems: true, financialYear: true },
       });
 
       if (!existing) {
@@ -522,10 +543,11 @@ export class SaleEntryService {
               where: { id: pi.id },
               data: { Qty: currentQty + remainingQty },
             });
+            // When incrementing back to purchaseEntry
             await prisma.purchaseEntry.update({
               where: { id: pi.purchaseEntryId },
               data: {
-                TotalQty: { increment: remainingQty },
+                ActualQty: { increment: remainingQty },
                 TotalAmount: { increment: remainingQty * pi.Rate.toNumber() },
               },
             });
@@ -596,7 +618,7 @@ export class SaleEntryService {
             await prisma.purchaseEntry.update({
               where: { id: pi.purchaseEntryId },
               data: {
-                TotalQty: { decrement: deduction },
+                ActualQty: { decrement: deduction },
                 TotalAmount: { decrement: deduction * pi.Rate.toNumber() },
               },
             });
@@ -616,6 +638,8 @@ export class SaleEntryService {
           UPIAmount: data.UPIAmount,
           TotalPaidAmount: data.TotalPaidAmount,
           Delete_Flg: data.Delete_Flg,
+          customername: data.customername,
+          Mobile: data.Mobile,
           createdBy: data.createdBy,
           updatedBy: data.updatedBy,
           deletedBy: data.deletedBy,
@@ -624,12 +648,6 @@ export class SaleEntryService {
             data.FinancialYearId !== undefined
               ? data.FinancialYearId
                 ? { connect: { HeaderId: data.FinancialYearId } }
-                : { disconnect: true }
-              : undefined,
-          customer:
-            data.customerId !== undefined
-              ? data.customerId
-                ? { connect: { customercode: data.customerId } }
                 : { disconnect: true }
               : undefined,
           saleItems: data.saleItems
@@ -657,7 +675,6 @@ export class SaleEntryService {
           data: updateData,
           include: {
             saleItems: true,
-            customer: true,
           },
         });
       });

@@ -143,6 +143,12 @@ export class UpdatePurchaseEntryDto {
   @IsDecimal()
   TotalQty: number;
 
+  @ApiProperty({
+    example: 100,
+    description: 'Actual quantity of purchased items',
+  })
+  ActualQty: number;
+
   @ApiProperty({ example: 5000, description: 'Total amount of purchase' })
   @IsDecimal()
   TotalAmount: number;

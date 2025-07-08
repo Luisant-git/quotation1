@@ -53,6 +53,9 @@ export class PartyService {
         where: {
           Delete_flg: 0,
         },
+        orderBy:{
+          createdAt: 'desc'
+        }
       });
     } catch (error) {
       console.error('Error fetching parties:', error);

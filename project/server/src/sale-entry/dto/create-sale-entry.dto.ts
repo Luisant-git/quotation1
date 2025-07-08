@@ -21,10 +21,13 @@ export class CreateSaleEntryDto {
   @IsString()
   BillDate: string;
 
-  @ApiProperty({ example: 1, description: 'Customer ID', required: false })
-  @IsOptional()
-  @IsInt()
-  customerId?: number;
+  @ApiProperty({ example: 'John Doe', description: 'Customer name' })
+  @IsString()
+  customername: string;
+
+  @ApiProperty({ example: '9876543210', description: 'Customer mobile number' })
+  @IsString() 
+  Mobile: string;
 
   @ApiProperty({ example: 100.0, description: 'Maximum Retail Price (MRP)' })
   @IsDecimal()

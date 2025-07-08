@@ -82,6 +82,16 @@ export class SaleEntryController {
     }
   }
 
+  @Get('customers')
+  @ApiOperation({ summary: 'Get all customers' })
+  @ApiResponse({
+    status: 200,
+    description: 'Customers retrieved successfully',
+  })
+  async getAllCustomers() {
+    return this.saleEntryService.findAllCustomers();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get sale entry by ID' })
   @ApiResponse({
@@ -109,7 +119,6 @@ export class SaleEntryController {
     }
   }
 
-
   @Get('deleted')
   @ApiOperation({ summary: 'Get all deleted sale entries' })
   @ApiResponse({
@@ -132,7 +141,6 @@ export class SaleEntryController {
       });
     }
   }
-
 
   @Patch('restore/:id')
   @ApiOperation({ summary: 'Restore a deleted sale entry' })

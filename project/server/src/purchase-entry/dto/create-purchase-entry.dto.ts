@@ -32,6 +32,10 @@ export class CreatePurchaseEntryDto {
   @IsDecimal()
   TotalQty: number;
 
+  @ApiProperty({ example: 100, description: 'Actual quantity of purchased items' })
+  @IsDecimal()
+  ActualQty: number;
+
   @ApiProperty({ example: 5000, description: 'Total amount of purchase' })
   @IsDecimal()
   TotalAmount: number;

@@ -14,7 +14,6 @@ export class StatsService {
       this.getPartyDeletedCount(),
       this.getSaleEntryDeletedCount(),
       this.getPurchaseEntryDeletedCount(),
-      this.getCustomerDeletedCount(),
       this.getItemDeletedCount(),
     ]);
 
@@ -40,13 +39,6 @@ export class StatsService {
       where: { Delete_Flg: 1 },
     });
     return { name: 'purchaseEntry', totalDeleted: count };
-  }
-
-  private async getCustomerDeletedCount(): Promise<DeletedCountDto | null> {
-    const count = await this.prisma.customer.count({
-      where: { Delete_Flg: 1 },
-    });
-    return { name: 'customer', totalDeleted: count };
   }
 
   private async getItemDeletedCount(): Promise<DeletedCountDto | null> {

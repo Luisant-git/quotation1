@@ -340,7 +340,7 @@ const DataTable: React.FC<DataTableProps> = ({
   };
   // Columns definition
   const columns: GridColDef<Row>[] = useMemo(
-    () => [
+    () => [   
       // {
       //   field: "id",
       //   headerClassName: "custom-header",

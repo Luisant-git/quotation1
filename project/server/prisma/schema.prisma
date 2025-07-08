@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlserver"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -76,23 +76,6 @@ model Party {
  
   purchaseEntries PurchaseEntry[]
   @@unique([Ptyname], name: "Party_Ptyname_unique")
-}
-
-model Customer {
-  customercode  Int          @id @default(autoincrement())
-  customername  String?
-  Address       String?
-  Mobile        String?      @unique
-  Delete_Flg    Int          @default(0)
-  DeletedDate   String? 
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  createdBy     Int 
-  updatedBy     Int? 
-  deletedBy     Int? 
-  concernId     Int?
-  // Relation
-  saleEntries   SaleEntry[]
 }
 
 model ClothHeader {
@@ -195,7 +178,8 @@ model SaleEntry {
   id              Int       @id @default(autoincrement())
   BillNo          String    @db.VarChar(50)
   BillDate        String   @db.VarChar(30)
-  customerId      Int?    
+  customername   String?    @db.VarChar(100)
+  Mobile         String?    @db.VarChar(100)   
   Remarks         String    @db.VarChar(200)
   TotalQty        Decimal   @default(0) @db.Decimal(32, 2)
   TotalAmount     Decimal   @default(0) @db.Decimal(32, 2)
@@ -211,7 +195,6 @@ model SaleEntry {
   ModifiedDate    DateTime?
   DeletedDate     DateTime?
   concernId       Int?
-  customer        Customer? @relation(fields: [customerId], references: [customercode])
   FinancialYearId Int?
   financialYear   FinancialYear? @relation(fields: [FinancialYearId], references: [HeaderId])
   saleItems       SaleItems[]
@@ -246,6 +229,7 @@ model PurchaseEntry {
   BillDate     String   @db.VarChar(30)
   Remarks      String   @db.VarChar(200)
   TotalQty     Decimal  @default(0) @db.Decimal(32, 2)
+  ActualQty    Decimal?  @default(0) @db.Decimal(32, 2)
   TotalAmount  Decimal  @default(0) @db.Decimal(32, 2)
   GSTAmount    Decimal  @default(0) @db.Decimal(32, 2)
   OtherType    String   @db.VarChar(4)

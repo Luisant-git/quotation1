@@ -8,7 +8,6 @@ import { AuthModule } from './auth/auth.module';
 import { ItemModule } from './item/item.module';
 import { SaleEntryModule } from './sale-entry/sale-entry.module';
 import { PurchaseEntryModule } from './purchase-entry/purchase-entry.module';
-import { CustomerModule } from './customer/customer.module';
 import { FinancialYearModule } from './financial-year/financial-year.module';
 import { ConcernMasterModule } from './concern-master/concern-master.module';
 import { PrismaService } from './prisma/prisma.service';
@@ -25,7 +24,6 @@ import { StatsModule } from './stats/stats.module';
     ItemModule,
     SaleEntryModule,
     PurchaseEntryModule,
-    CustomerModule,
     FinancialYearModule,
     ConcernMasterModule,
     StatsModule, 

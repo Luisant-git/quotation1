@@ -60,7 +60,7 @@ const AddPurchaseEntry = ({ isnew = false }) => {
   const [isNetAmount, setIsNetAmount] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
-  console.log('-------- ROWS - purchase -------- : ',rows);
+  console.log('-------- ROWS - purchase -------- : ',rows, saleEntry);
 
   const checkNetAmount = (rows: any[]) => {
     const hasZeroNetAmount = rows.some(row => parseFloat(row.netAmount || "0") === 0);
@@ -154,13 +154,30 @@ const AddPurchaseEntry = ({ isnew = false }) => {
     });
   };
 
+  // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target;
+  //   setSaleEntry((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
+  // };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setSaleEntry((prev) => ({
+  const { name, value } = e.target;
+  
+  // Special handling for PurchaseItems array
+  if (name === 'PurchaseItems' && Array.isArray(value)) {
+    setSaleEntry(prev => ({
       ...prev,
-      [name]: value,
+      PurchaseItems: value
     }));
-  };
+  } else {
+    setSaleEntry(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  }
+};
 
   const handleSubmit = async (print: boolean = false) => {
     try {

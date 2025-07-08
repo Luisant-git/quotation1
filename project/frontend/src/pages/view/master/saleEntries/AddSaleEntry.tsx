@@ -19,9 +19,9 @@ import {
   getTodayDate,
   printSaleEntry,
 } from "../../../../utils/common";
-import { getCustomers } from "../../../../api/customer";
 import { useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
+import { getCustomers } from "../../../../api/customer";
 
 // Initial state for the sale entry form
 const initialSaleEntry = {
@@ -31,16 +31,11 @@ const initialSaleEntry = {
   TotalPaidAmount: 0,
   CardAmount: 0,
   UPIAmount: 0,
-  customerId: 0,
+  customername: "",
+  Mobile: "",
   BillNo: "",
   RefNo: Math.floor(Math.random() * 1000000).toString(),
 };
-
-const validationSchema = Yup.object().shape({
-  customerId: Yup.number()
-    .min(1, "Customer is required")
-    .required("Customer is required"),
-});
 
 const AddSaleEntry = ({ isnew = false }) => {
   const [saleEntry, setSaleEntry] = useState(initialSaleEntry);
@@ -50,12 +45,10 @@ const AddSaleEntry = ({ isnew = false }) => {
   const [rows, setRows] = useState<any>([]);
   const [totalAmount, setTotalAmount] = useState(0);
   const [totalQty, setTotalQty] = useState(0);
-  const [customer, setCustomer] = useState<any>([]);
-  const [mobileNo, setMobileNo] = useState("");
-  console.log("customer - state: ", customer);
-  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
-  const [errors, setErrors] = useState<{ customerId?: string }>({});
   const [isNetAmount, setIsNetAmount] = useState(false);
+  const [customers, setCustomers] = useState<
+    { customername: string; Mobile: string }[]
+  >([]);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -72,6 +65,16 @@ const AddSaleEntry = ({ isnew = false }) => {
     console.log("Net amount check result:", isNetAmount);
   }, [rows]);
 
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      const response = await getCustomers();
+      if (response && Array.isArray(response.data)) {
+        setCustomers(response.data);
+      }
+    };
+    fetchCustomers();
+  }, []);
+
   const fetchBillNo = async () => {
     const billNo = await getBillNo();
     setSaleEntry((prev) => ({
@@ -82,14 +85,13 @@ const AddSaleEntry = ({ isnew = false }) => {
 
   useEffect(() => {
     fetchBillNo();
-    getCustomerDate();
   }, []);
 
   useEffect(() => {
-    if (!isnew && id && customer.length > 0) {
+    if (!isnew && id) {
       getSaleData();
     }
-  }, [isnew, id, customer]);
+  }, [isnew, id]);
 
   const getSaleData = () => {
     setLoading(true);
@@ -121,10 +123,6 @@ const AddSaleEntry = ({ isnew = false }) => {
             })) || [];
 
           setRows(mappedRows);
-          const selectedCustomer = customer.find(
-            (cust: any) => cust.customercode === response?.data.data.customerId
-          );
-          setSelectedCustomer(selectedCustomer);
           setLoading(false);
         }
       })
@@ -133,14 +131,6 @@ const AddSaleEntry = ({ isnew = false }) => {
         toast.error("Error fetching sale data", { autoClose: 3000 });
         setLoading(false);
       });
-  };
-
-  const getCustomerDate = () => {
-    getCustomers().then((response) => {
-      if (response) {
-        setCustomer(response?.data);
-      }
-    });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -152,19 +142,6 @@ const AddSaleEntry = ({ isnew = false }) => {
   };
 
   const handleSubmit = async (print: boolean = false) => {
-    try {
-      await validationSchema.validate(saleEntry, { abortEarly: false });
-      setErrors({});
-    } catch (validationErrors) {
-      const formattedErrors: { customerId?: string } = {};
-      (validationErrors as Yup.ValidationError).inner.forEach((error: any) => {
-        formattedErrors[error.path as keyof typeof formattedErrors] =
-          error.message;
-      });
-      setErrors(formattedErrors);
-      return;
-    }
-
     setLoading(true);
     try {
       const payload = {
@@ -192,6 +169,8 @@ const AddSaleEntry = ({ isnew = false }) => {
         })),
       };
 
+      console.log("Payload to save sale entry:", payload);
+
       const response = isnew
         ? await postSaleEntry(payload)
         : await updateSaleEntry(id, payload);
@@ -201,13 +180,12 @@ const AddSaleEntry = ({ isnew = false }) => {
         setRows([]);
         setTotalAmount(0);
         setTotalQty(0);
-        setSelectedCustomer(null);
         toast.success("Sale Entry Saved Successfully", { autoClose: 1000 });
         if (print) {
           printSaleEntry(response?.data);
         }
         navigate("/sale-entries");
-      } 
+      }
       // else {
       //   toast.error("Error saving sale entry", { autoClose: 1000 });
       // }
@@ -263,72 +241,43 @@ const AddSaleEntry = ({ isnew = false }) => {
           />
         </Grid>
 
-        {/* Customer */}
-        <Grid item xs={12} sm={3}>
-          <TextField
-            label="Customer"
-            size="small"
-            fullWidth
-            value={selectedCustomer?.customername || ""}
-            onChange={(e) => {
-              const customerName = e.target.value;
-              // Find customer by name (case insensitive)
-              const matchedCustomer = customer.find(
-                (cust: any) =>
-                  cust.customername.toLowerCase() === customerName.toLowerCase()
-              );
-
-              if (matchedCustomer) {
-                setSelectedCustomer(matchedCustomer);
-                setSaleEntry((prev) => ({
-                  ...prev,
-                  customerId: matchedCustomer.customercode,
-                }));
-              } else {
-                setSelectedCustomer(null);
-                setSaleEntry((prev) => ({
-                  ...prev,
-                  customerId: 0,
-                }));
-              }
-            }}
-            InputLabelProps={{ shrink: true }}
-          />
-        </Grid>
-
         {/* Mobile No */}
         <Grid item xs={12} sm={3}>
           <TextField
             label="Mobile No"
-            name="mobileNo"
+            name="Mobile"
             type="number"
             size="small"
-            value={mobileNo}
+            value={saleEntry.Mobile}
             onChange={(e) => {
-              const enteredMobile = e.target.value;
-              setMobileNo(enteredMobile);
-
-              // Find customer with matching mobile number
-              const matchedCustomer = customer.find(
-                (cust: any) => cust.Mobile === enteredMobile
-              );
-
-              if (matchedCustomer) {
-                setSelectedCustomer(matchedCustomer);
-                setSaleEntry((prev) => ({
-                  ...prev,
-                  customerId: matchedCustomer.customercode,
-                }));
-              } else if (enteredMobile === "") {
-                // Clear selection if mobile field is empty
-                setSelectedCustomer(null);
-                setSaleEntry((prev) => ({
-                  ...prev,
-                  customerId: 0,
-                }));
-              }
+              const mobile = e.target.value;
+              setSaleEntry((prev) => ({
+                ...prev,
+                Mobile: mobile,
+                customername:
+                  customers.find((c) => c.Mobile === mobile)?.customername ||
+                  prev.customername,
+              }));
             }}
             fullWidth
+            InputLabelProps={{ shrink: true }}
+          />
+        </Grid>
+
+        {/* Customer */}
+        <Grid
+          item
+          xs={12}
+          sm={3}
+          style={{ display: "flex", alignItems: "center", gap: 8 }}
+        >
+          <TextField
+            label="Customer"
+            name="customername"
+            size="small"
+            fullWidth
+            value={saleEntry.customername}
+            onChange={handleInputChange}
             InputLabelProps={{ shrink: true }}
           />
         </Grid>

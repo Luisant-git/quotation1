@@ -2,10 +2,11 @@ import axiosServices from "../utils/axios";
 
 const endpoints = {
   key: "customers",
+  saleEntryCustomers: "sale-entries/customers",
 };
 
 export async function getCustomers() {
-  const response = await axiosServices.get(`${endpoints.key}`);
+  const response = await axiosServices.get(`${endpoints.saleEntryCustomers}`);
   return response;
 }
 export async function getCustomer(id: any) {

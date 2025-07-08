@@ -24,8 +24,13 @@ export class UpdateSaleEntryDto {
 
   @ApiProperty()
   @IsOptional()
-  @IsInt()
-  customerId?: number;
+  @IsString()
+  customername?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  Mobile?: string;
 
   @ApiProperty()
   @IsOptional()

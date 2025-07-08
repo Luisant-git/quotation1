@@ -47,8 +47,8 @@ interface SaleEntryData {
   id: number;
   billNo: string;
   billDate: string;
-  mobile: string;
-  customerName: string;
+  customername: string;
+  Mobile: string;
   customerAddress: string;
   remarks: string;
   totalQty: number;
@@ -68,14 +68,13 @@ function SaleEntry() {
   const [searchTerm, setSearchTerm] = useState("");
   const [openRows, setOpenRows] = useState<number[]>([]);
   const [orderBy, setOrderBy] = useState<keyof SaleEntryData>("id");
-  const [order, setOrder] = useState<"asc" | "desc">("asc");
+  const [order, setOrder] = useState<"asc" | "desc">("desc");
   const [selectedSaleEntryId, setSelectedSaleEntryId] = useState<number | null>(
     null
   );
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   console.log("sale entry home page table", saleEntries);
-  
 
   const fetchSaleEntries = useCallback(() => {
     setLoading(true);
@@ -83,44 +82,44 @@ function SaleEntry() {
       .then((response) => {
         if (response && response.status === 200) {
           const filteredData = response.data.data
-          .filter((entry: any) => Number(entry.TotalAmount) != 0)
-          .map((entry: any) => ({
-            id: entry.id,
-            billNo: entry.BillNo,
-            billDate: entry.BillDate,
-            mobile: entry.customer?.Mobile || "",
-            customerName: entry.customer?.customername || "",
-            customerAddress: entry.customer?.Address || "",
-            remarks: entry.Remarks,
-            totalQty: entry.TotalQty,
-            totalAmount: entry.TotalAmount,
-            totalPaidCash: entry.TotalPaidAmount,
-            cardAmount: entry.CardAmount,
-            upiAmount: entry.UPIAmount,
-            createdAt: entry.CreatedDate,
-            updatedAt: entry.ModifiedDate,
-            saleItems: entry.saleItems.map((item: any) => ({
-              id: item.id,
-              HSNCode: item.HSNCode,
-              itemName: item.itemName || item.ItemMaster?.itemName || "",
-              category: item.category || item.ItemMaster?.category || "",
-              color: item.color || item.ItemMaster?.color || "",
-              size: item.size || item.ItemMaster?.size || "",
-              GSTAmount: item.GSTAmount,
-              GSTPercent: item.GSTPercent,
-              NetAmount: item.NetAmount,
-              DiscAmount: item.DiscAmount,
-              taxableAmount: item.Amount,
-              Qty: item.Qty,
-              MRP: item.MRP,
-              diskPersentage: item.DiscPercent,
-              Rate: item.Rate,
-              DiscType: item.DiscType,
-              createdAt: item.createdAt,
-              updatedAt: item.updatedAt,
-              saleEntryId: item.saleEntryId,
-            })),
-          }));
+            .filter((entry: any) => Number(entry.TotalAmount) != 0)
+            .map((entry: any) => ({
+              id: entry.id,
+              billNo: entry.BillNo,
+              billDate: entry.BillDate,
+              Mobile: entry.Mobile || "",
+              customername: entry.customername || "",
+              customerAddress: entry.customer?.Address || "",
+              remarks: entry.Remarks,
+              totalQty: entry.TotalQty,
+              totalAmount: entry.TotalAmount,
+              totalPaidCash: entry.TotalPaidAmount,
+              cardAmount: entry.CardAmount,
+              upiAmount: entry.UPIAmount,
+              createdAt: entry.CreatedDate,
+              updatedAt: entry.ModifiedDate,
+              saleItems: entry.saleItems.map((item: any) => ({
+                id: item.id,
+                HSNCode: item.HSNCode,
+                itemName: item.itemName || item.ItemMaster?.itemName || "",
+                category: item.category || item.ItemMaster?.category || "",
+                color: item.color || item.ItemMaster?.color || "",
+                size: item.size || item.ItemMaster?.size || "",
+                GSTAmount: item.GSTAmount,
+                GSTPercent: item.GSTPercent,
+                NetAmount: item.NetAmount,
+                DiscAmount: item.DiscAmount,
+                taxableAmount: item.Amount,
+                Qty: item.Qty,
+                MRP: item.MRP,
+                diskPersentage: item.DiscPercent,
+                Rate: item.Rate,
+                DiscType: item.DiscType,
+                createdAt: item.createdAt,
+                updatedAt: item.updatedAt,
+                saleEntryId: item.saleEntryId,
+              })),
+            }));
           setSaleEntries(filteredData);
         }
       })
@@ -206,11 +205,11 @@ function SaleEntry() {
       saleEntries
         .filter(
           (entry) =>
-            entry.customerName
+            entry.customername
               .toLowerCase()
               .includes(searchTerm.toLowerCase()) ||
             entry.billNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            entry.mobile.toLowerCase().includes(searchTerm.toLowerCase())
+            entry.Mobile.toLowerCase().includes(searchTerm.toLowerCase())
         )
         .sort((a, b) => {
           if (order === "asc") {
@@ -270,7 +269,7 @@ function SaleEntry() {
                     padding: "8px",
                   }}
                 />
-                <TableCell
+                {/* <TableCell
                   style={{
                     backgroundColor: "#6B76F8",
                     color: "#fff",
@@ -284,7 +283,7 @@ function SaleEntry() {
                   >
                     TITLE
                   </TableSortLabel>
-                </TableCell>
+                </TableCell> */}
                 <TableCell
                   style={{
                     backgroundColor: "#6B76F8",
@@ -377,9 +376,9 @@ function SaleEntry() {
                           {openRows.includes(entry.id) ? <Remove /> : <Add />}
                         </IconButton>
                       </TableCell>
-                      <TableCell style={{ padding: "8px" }}>
+                      {/* <TableCell style={{ padding: "8px" }}>
                         {entry.id}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell style={{ padding: "8px" }}>
                         {entry.billNo}
                       </TableCell>
@@ -387,10 +386,10 @@ function SaleEntry() {
                         {new Date(entry.billDate).toLocaleDateString()}
                       </TableCell>
                       <TableCell style={{ padding: "8px" }}>
-                        {entry.customerName}
+                        {entry.customername}
                       </TableCell>
                       <TableCell style={{ padding: "8px" }}>
-                        {entry.mobile}
+                        {entry.Mobile}
                       </TableCell>
                       <TableCell style={{ padding: "8px" }}>
                         {entry.totalQty}

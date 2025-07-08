@@ -311,12 +311,27 @@ const DataTable: React.FC<DataTableProps> = ({
     }
   };
 
-  const handleDeleteRow = (id: number) => {
-    const updatedRows = rows.filter((row) => row.id !== id);
-    console.log("UPDATED-ROWS:", updatedRows);
+  // const handleDeleteRow = (id: number) => {
+  //   const updatedRows = rows.filter((row) => row.id !== id);
+  //   console.log("UPDATED-ROWS:", updatedRows);
 
-    setRows(updatedRows);
-  };
+  //   setRows(updatedRows);
+  // };
+
+  const handleDeleteRow = (id: number) => {
+  const updatedRows = rows.filter((row) => row.id !== id);
+  setRows(updatedRows);
+  
+  if (saleEntry && saleEntry.PurchaseItems) {
+    const updatedItems = saleEntry.PurchaseItems.filter((item: any) => item.id !== id);
+    handleInputChange({
+      target: {
+        name: 'PurchaseItems',
+        value: updatedItems
+      }
+    } as React.ChangeEvent<HTMLInputElement>);
+  }
+};
 
   // Columns definition
   const columns: GridColDef<Row>[] = useMemo(
