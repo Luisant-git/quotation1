@@ -11,8 +11,9 @@ import {
   TableSortLabel,
   Pagination,
   CircularProgress,
-} from "@mui/material";
-import { Add, Remove } from "@mui/icons-material";
+} from "@mui/material";  
+import { printSaleEntry } from "../../../../utils/common";
+import { Add, Remove, Print } from "@mui/icons-material";
 import { ThemeProvider } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 import PageheaderQuotaion from "../../../../components/page-header/PageheadQuotaion";
@@ -230,6 +231,11 @@ function SaleEntry() {
     setPage(newPage - 1);
   };
 
+  const printOut = (entry: SaleEntryData) => {
+    printSaleEntry(entry);
+    console.log("Printing sale entry:", entry);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Fragment>
@@ -400,6 +406,15 @@ function SaleEntry() {
                       {/* HIGHLIGHT: Added Edit button */}
                       <TableCell style={{ padding: "8px" }}>
                         <div className="hstack gap-2 fs-15">
+                          {/* Print Icon Button */}
+                          <IconButton
+                            aria-label="print"
+                            size="small"
+                            onClick={() => printOut(entry)}
+                            color="primary"
+                          >
+                            <Print />
+                          </IconButton>
                           <Link
                             to={`/sale-entry/${entry.id}`} // Note: Changed from /purchase-entry to /sale-entry for context; use /purchase-entry/${entry.id} if that's the intended route
                             className="btn btn-ic on btn-sm btn-info-light rounded-pill"

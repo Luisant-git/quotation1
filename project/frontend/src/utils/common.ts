@@ -5,15 +5,15 @@ export const printSaleEntry = (saleEntryData: any) => {
   if (!printWindow) {
     console.error("Failed to open print window");
     return;
-  }
+  } 
 
-  printWindow.document.write(`
+  printWindow.document.write(` 
      <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Receipt - ${saleEntryData?.BillNo}</title>
+    <title>Receipt - ${saleEntryData?.billNo || saleEntryData?.BillNo}</title>
     <style>
         body { 
             font-family: 'Courier New', monospace; 
@@ -52,16 +52,25 @@ export const printSaleEntry = (saleEntryData: any) => {
 
         <table class="info-table">
             <tr><td class="bold left">BILL NO:</td><td class="right">${
-              saleEntryData?.BillNo
+              saleEntryData?.billNo || saleEntryData?.BillNo
             }</td></tr>
             <tr><td class="bold left">Date:</td><td class="right">${
-              saleEntryData?.BillDate
+              saleEntryData?.billDate || saleEntryData?.BillDate
             }</td></tr>
-            <tr><td class="bold left">Customer ID:</td><td class="right">${
-              saleEntryData?.customerId
+            <tr><td class="bold left">Customer:</td><td class="right">${
+              saleEntryData?.customername || saleEntryData?.customerName
+            }</td></tr>
+            <tr><td class="bold left">Mobile:</td><td class="right">${
+              saleEntryData?.Mobile || saleEntryData?.mobile
             }</td></tr>
             <tr><td class="bold left">Remarks:</td><td class="right">${
-              saleEntryData?.Remarks
+              saleEntryData?.remarks !== undefined &&
+              saleEntryData?.remarks !== null
+                ? saleEntryData.remarks
+                : saleEntryData?.Remarks !== undefined &&
+                  saleEntryData?.Remarks !== null
+                ? saleEntryData.Remarks
+                : ""
             }</td></tr>
         </table>
 
@@ -78,17 +87,12 @@ export const printSaleEntry = (saleEntryData: any) => {
             <tbody>
                 ${saleEntryData?.saleItems
                   ?.map(
-                    (item: {
-                      Item_Id: any;
-                      Qty: any;
-                      Rate: number;
-                      NetAmount: number;
-                    }) => `
+                    (item: any) => `
                 <tr>
-                    <td>${item.Item_Id}</td>
-                    <td class="right">${item?.Qty}</td>
-                    <td class="right">${item?.Rate}</td>
-                    <td class="right">${item?.NetAmount}</td>
+                    <td>${item?.itemName || item?.Item_Id || "N/A"}</td>
+                    <td class="right">${item?.Qty || 0}</td>
+                    <td class="right">₹${item?.Rate || 0}</td>
+                    <td class="right">₹${item?.NetAmount || 0}</td>
                 </tr>`
                   )
                   .join("")}
@@ -98,16 +102,28 @@ export const printSaleEntry = (saleEntryData: any) => {
         <div class="line"></div>
         <table class="info-table">
             <tr><td class="bold">Total Qty:</td><td class="right">${
-              saleEntryData?.TotalQty
+              saleEntryData?.totalQty || saleEntryData?.TotalQty || 0
             }</td></tr>
-            <tr><td class="bold">Total Amount:</td><td class="right">₹${saleEntryData?.TotalAmount}</td></tr>
-            <tr><td class="bold">Card Amount:</td><td class="right">₹${saleEntryData?.CardAmount}</td></tr>
-            <tr><td class="bold">UPI Amount:</td><td class="right">₹${saleEntryData?.UPIAmount}</td></tr>
-            <tr><td class="bold">Total Paid Amount:</td><td class="right">₹${saleEntryData?.TotalPaidAmount}</td></tr>
+            <tr><td class="bold">Total Amount:</td><td class="right">₹${
+              saleEntryData?.totalAmount || saleEntryData?.TotalAmount || 0
+            }</td></tr>
+            <tr><td class="bold">Card Amount:</td><td class="right">₹${
+              saleEntryData?.cardAmount || saleEntryData?.CardAmount || 0
+            }</td></tr>
+            <tr><td class="bold">UPI Amount:</td><td class="right">₹${
+              saleEntryData?.upiAmount || saleEntryData?.UPIAmount || 0
+            }</td></tr>
+            <tr><td class="bold">Cash Amount:</td><td class="right">₹${
+              saleEntryData?.totalPaidCash ||
+              saleEntryData?.TotalPaidAmount ||
+              0
+            }</td></tr>
         </table>
 
         <div class="line"></div>
-        <p class="right bold total">Total: ₹${saleEntryData?.TotalAmount}</p>
+        <p class="right bold total">Total: ₹${
+          saleEntryData?.totalAmount || saleEntryData?.TotalAmount || 0
+        }</p>
         <div class="line"></div>
 
         <p class="bold">Thank You!</p>
@@ -128,7 +144,7 @@ export const printSaleEntry = (saleEntryData: any) => {
   printWindow.document.close();
 };
 
- export const getTodayDate = () => {
+export const getTodayDate = () => {
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");
@@ -146,8 +162,9 @@ export const getBillNo = async () => {
   }, 0);
   const nextBillNo = maxId + 1;
   localStorage.setItem("lastBillNo", nextBillNo.toString());
-  console.log("BILL - SALE ENTRY", `BILL-${nextBillNo.toString().padStart(4, "0")}`);
+  console.log(
+    "BILL - SALE ENTRY",
+    `BILL-${nextBillNo.toString().padStart(4, "0")}`
+  );
   return `BILL-${nextBillNo.toString().padStart(4, "0")}`;
 };
-
-

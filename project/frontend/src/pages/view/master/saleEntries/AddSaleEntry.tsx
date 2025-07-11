@@ -15,9 +15,9 @@ import {
 import EditCell from "./EditCell";
 import { toast } from "react-toastify";
 import {
-  getBillNo,
+  getBillNo, 
   getTodayDate,
-  printSaleEntry,
+  printSaleEntry, 
 } from "../../../../utils/common";
 import { useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
@@ -183,6 +183,8 @@ const AddSaleEntry = ({ isnew = false }) => {
         toast.success("Sale Entry Saved Successfully", { autoClose: 1000 });
         if (print) {
           printSaleEntry(response?.data);
+          console.log("Printing sale entry:", response?.data);
+          
         }
         navigate("/sale-entries");
       }
@@ -430,7 +432,7 @@ const AddSaleEntry = ({ isnew = false }) => {
                 onClick={() =>
                   isNetAmount
                     ? toast.error("Please Enter RATE")
-                    : handleSubmit()
+                    : handleSubmit(true)
                 }
               >
                 Save & Print
